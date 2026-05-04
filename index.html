@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>IPD Clinic Board v23 Simple Patient Emoji</title>
+<title>IPD Clinic Board v28 Urgent Manager</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -20,18 +20,20 @@ button,input,textarea,select{font:inherit}
 .brand{display:flex;align-items:center;gap:10px;min-width:270px}.brandLogo{height:46px;width:auto;max-width:150px;object-fit:contain;background:white;border-radius:10px;padding:3px;border:1px solid var(--line)}.brand h1{font-size:17px;line-height:1;color:#173f78}.brand small{font-size:11px;color:var(--muted)}
 .cmd{display:flex;align-items:center;gap:8px;flex:1}.cmd input{width:100%;height:40px;border:1px solid var(--line2);background:#fbfffd;border-radius:999px;padding:0 16px;outline:none}.cmd input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(35,180,134,.12)}
 .btn{border:1px solid var(--line2);background:var(--panel);border-radius:12px;padding:9px 12px;cursor:pointer;color:var(--text);white-space:nowrap}.btn:hover{background:var(--panel2)}.btn.primary{background:var(--mint);border-color:var(--mint);color:white}.btn.danger{color:var(--red);border-color:#f3b7b7}.btn.ghost{background:transparent}.status{font-size:12px;color:var(--muted);max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#summary{display:flex;gap:10px;padding:12px 14px;background:var(--bg);border-bottom:1px solid var(--line);flex-shrink:0}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow)}.stat{min-width:145px}.stat b{font-size:22px}.stat span{display:block;font-size:12px;color:var(--muted);margin-top:2px}.stat.warn b{color:var(--amber)}.stat.bad b{color:var(--red)}.stat.good b{color:var(--green)}
+#summary{display:flex;gap:10px;padding:12px 14px;background:var(--bg);border-bottom:1px solid var(--line);flex-shrink:0;align-items:stretch}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow)}.stat{min-width:128px}.stat.clickable{cursor:pointer;transition:transform .12s,box-shadow .12s,border-color .12s}.stat.clickable:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(23,54,42,.12);border-color:var(--line2)}.stat b{font-size:22px}.stat span{display:block;font-size:12px;color:var(--muted);margin-top:2px}.stat.warn b{color:var(--amber)}.stat.bad b{color:var(--red)}.stat.good b{color:var(--green)}.urgentBoard{flex:1;min-width:360px;display:flex;flex-direction:column;gap:8px;padding:10px 12px}.urgentHead{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px;color:var(--muted);font-weight:800}.urgentHead b{color:var(--text);font-size:13px}.urgentList{display:flex;gap:7px;overflow-x:auto;padding-bottom:1px}.urgentChip{border:1px solid var(--line);background:#fbfffd;border-radius:999px;padding:7px 10px;font-size:12px;white-space:nowrap;cursor:pointer;display:flex;gap:6px;align-items:center}.urgentChip:hover{filter:brightness(.97);border-color:var(--line2)}.urgentChip.overdue{background:#fff1f1;border-color:#ffc9c9;color:#9f1239}.urgentChip.soon{background:#fff8e6;border-color:#fde2a3;color:#92400e}.urgentChip.empty{cursor:default;color:var(--muted);background:#fbfffd}.urgentMore{font-size:11px;color:var(--muted);align-self:center;white-space:nowrap}.urgentChip.manage{position:relative}.urgentActionInfo{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fbfffd;margin-bottom:12px}.urgentActionInfo b{display:block;font-size:16px;margin-bottom:4px}.urgentActionInfo div{font-size:12px;color:var(--muted);line-height:1.45}.urgentActionBtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.urgentActionBtns .btn{width:100%}
 #workspace{display:grid;grid-template-columns:1fr 290px;gap:12px;padding:0 14px 14px;min-height:0;flex:1}.boardShell{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;min-width:0;display:flex}.rightPanel{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:auto;padding:14px}
 #left-date{width:var(--dayW);flex-shrink:0;border-right:1px solid var(--line);background:#fbfffd;overflow:hidden}#left-date .spacer{height:var(--head);border-bottom:1px solid var(--line);background:var(--panel2)}#date-inner{position:relative}.dateBlock{height:calc(24 * var(--hour));border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center}.dateBlock.today{background:#fff4f4}.dateText{font-size:12px;font-weight:800;color:var(--muted);line-height:1.35;text-align:center;padding:8px 0;white-space:nowrap;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.4px}.dateBlock.today .dateText{color:var(--red)}
 #left-time{width:var(--timeW);flex-shrink:0;border-right:1px solid var(--line);background:#fbfffd;overflow:hidden}#left-time .spacer{height:var(--head);border-bottom:1px solid var(--line);background:var(--panel2)}.timeLabel{height:var(--hour);border-bottom:1px solid var(--line);font-size:11px;color:var(--soft);padding:5px 7px}
-#main-scroll{flex:1;overflow:auto;position:relative;background:#fff}#lanes{display:flex;position:relative;min-height:100%}.lane{min-width:260px;flex:1;border-right:1px solid var(--line);position:relative;background:#fff}.laneHeader{height:var(--head);position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:7px 8px;display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:8px;overflow:hidden}.avatar{width:38px;height:38px;border-radius:15px;display:grid;place-items:center;color:white;font-weight:800;font-size:20px;flex-shrink:0}.pInfo{min-width:0;overflow:hidden}.pName{font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.15}.pMeta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}.hActions{display:grid;grid-template-columns:repeat(2,auto);gap:3px;flex-shrink:0;align-content:center}.mini{border:1px solid var(--line2);background:var(--panel2);border-radius:8px;padding:3px 5px;cursor:pointer;font-size:10px;line-height:1.1}.mini:hover{filter:brightness(.96)}.mini.danger{color:var(--red);background:#fff2f2;border-color:#ffd1d1}
+#main-scroll{flex:1;overflow:auto;position:relative;background:#fff}#lanes{display:flex;position:relative;min-height:100%}.lane{min-width:260px;flex:1;border-right:1px solid var(--line);position:relative;background:#fff}.laneHeader{height:var(--head);position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:7px 8px;display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:8px;overflow:hidden}.avatar{width:38px;height:38px;border-radius:15px;display:grid;place-items:center;color:white;font-weight:800;font-size:20px;flex-shrink:0}.pInfo{min-width:0;overflow:hidden}.pName{font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.15}.pMeta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}.hActions{display:grid;grid-template-columns:repeat(3,auto);gap:3px;flex-shrink:0;align-content:center}.mini{border:1px solid var(--line2);background:var(--panel2);border-radius:8px;padding:3px 5px;cursor:pointer;font-size:10px;line-height:1.1}.mini:hover{filter:brightness(.96)}.mini.danger{color:var(--red);background:#fff2f2;border-color:#ffd1d1}
 .hourCell{height:var(--hour);border-bottom:1px solid var(--line);cursor:pointer}.hourCell:nth-child(odd){background:#fcfefd}.hourCell:hover{background:#f2fbf7}
-.ev{position:absolute;left:6px;right:6px;min-height:32px;border-radius:12px;padding:6px 8px;border-left:5px solid;box-shadow:0 5px 14px rgba(23,54,42,.08);font-size:11px;overflow:hidden;cursor:grab;user-select:none;z-index:5;background:#eef7ff}.ev:active{cursor:grabbing}.ev.selected{outline:2px solid #111827;outline-offset:2px;z-index:11}.ev.done{opacity:.55}.ev.overdue{background:#fff1f1!important;border-left-color:var(--red)!important;color:#9f1239!important}.ev.soon{background:#fff8e6!important;border-left-color:var(--amber)!important;color:#92400e!important}.evName{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.evTime{opacity:.75;margin-top:1px}.evNote{opacity:.65;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.doneRow{color:var(--green);font-size:10px;margin-top:2px}.evDoneMini,.evEditMini{position:absolute;top:5px;width:22px;height:22px;border:0;border-radius:50%;color:white;font-weight:900;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.12);z-index:12}.evDoneMini{right:6px;background:var(--green)}.evEditMini{right:32px;background:#2563eb}.evDoneMini:hover,.evEditMini:hover{filter:brightness(.95);transform:scale(1.04)}
+.ev{position:absolute;left:6px;right:6px;min-height:32px;border-radius:12px;padding:6px 8px;border-left:5px solid;box-shadow:0 5px 14px rgba(23,54,42,.08);font-size:11px;overflow:hidden;cursor:grab;user-select:none;z-index:5;background:#eef7ff}.ev:active{cursor:grabbing}.ev.selected{outline:2px solid #111827;outline-offset:2px;z-index:11}.ev.focusFlash{animation:focusFlash 1.2s ease-in-out 3;z-index:20}@keyframes focusFlash{0%,100%{outline:2px solid transparent;transform:scale(1)}50%{outline:4px solid #111827;outline-offset:3px;transform:scale(1.02)}}.ev.done{opacity:.55}.ev.overdue{background:#fff1f1!important;border-left-color:var(--red)!important;color:#9f1239!important}.ev.soon{background:#fff8e6!important;border-left-color:var(--amber)!important;color:#92400e!important}.evName{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.evTime{opacity:.75;margin-top:1px}.evNote{opacity:.65;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.doneRow{color:var(--green);font-size:10px;margin-top:2px}.evDoneMini,.evEditMini{position:absolute;top:5px;width:22px;height:22px;border:0;border-radius:50%;color:white;font-weight:900;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.12);z-index:12}.evDoneMini{right:6px;background:var(--green)}.evEditMini{right:32px;background:#2563eb}.evDoneMini:hover,.evEditMini:hover{filter:brightness(.95);transform:scale(1.04)}
 .resizeH{position:absolute;left:0;right:0;bottom:0;height:8px;cursor:ns-resize}.resizeH:hover{background:rgba(0,0,0,.08)}
 #nowLine{position:absolute;left:0;right:0;height:2px;background:var(--red);z-index:30;pointer-events:none;box-shadow:0 0 8px rgba(239,68,68,.45)}#nowLine:before{content:"";position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--red)}.addLane{width:72px;flex-shrink:0;background:#fbfffd;border-right:1px solid var(--line)}.addHead{height:var(--head);position:sticky;top:0;z-index:20;display:grid;place-items:center;border-bottom:1px solid var(--line);cursor:pointer;color:var(--mint);font-weight:800}.addHead:hover{background:var(--mint2)}
-.panelTitle{font-size:15px;font-weight:900;margin-bottom:10px}.taskList{display:flex;flex-direction:column;gap:8px}.taskItem{border:1px solid var(--line);border-radius:14px;padding:9px;background:#fbfffd}.taskItem b{font-size:12px}.taskItem div{font-size:11px;color:var(--muted);margin-top:2px}.hint{font-size:11px;color:var(--muted);line-height:1.5;margin-top:14px}.sep{height:1px;background:var(--line);margin:14px 0}
+.panelTitle{font-size:15px;font-weight:900;margin-bottom:10px}.taskList{display:flex;flex-direction:column;gap:8px}.taskItem{border:1px solid var(--line);border-radius:14px;padding:9px;background:#fbfffd}.taskItem.clickable{cursor:pointer}.taskItem.clickable:hover{background:#f0fff8;border-color:var(--mint)}.taskItem b{font-size:12px}.taskItem div{font-size:11px;color:var(--muted);margin-top:2px}.hint{font-size:11px;color:var(--muted);line-height:1.5;margin-top:14px}.sep{height:1px;background:var(--line);margin:14px 0}
 #tt{position:fixed;z-index:9999;pointer-events:none;opacity:0;transition:.12s;max-width:280px;background:#10251f;color:white;border-radius:16px;padding:12px 14px;box-shadow:0 16px 36px rgba(0,0,0,.25);font-size:12px}#tt.on{opacity:1}.ttName{font-weight:900;font-size:14px;margin-bottom:5px}.ttMuted{color:#b7cbc3}.ttDone{color:#86efac;margin-top:6px}
 .modalBg{position:fixed;inset:0;background:rgba(15,35,29,.35);display:none;align-items:center;justify-content:center;z-index:1000}.modalBg.open{display:flex}.modal{background:white;border-radius:20px;border:1px solid var(--line);box-shadow:0 25px 70px rgba(0,0,0,.22);padding:20px;width:360px;max-height:90vh;overflow:auto}.modal h3{font-size:18px;margin-bottom:14px}.field{margin-bottom:10px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:700}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line2);border-radius:12px;padding:9px 11px;outline:none}.field textarea{min-height:62px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.modalBtns{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}.chipRow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.chip{font-size:11px;padding:5px 8px;border:1px solid var(--line2);border-radius:999px;background:var(--panel2);cursor:pointer}.staffItem{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:7px;background:#fbfffd}.staffName{font-weight:700}.staffRemove{border:1px solid #ffd1d1;background:#fff2f2;color:var(--red);border-radius:9px;padding:4px 8px;cursor:pointer}.emojiSelect{font-size:24px;line-height:1;height:48px;padding:6px 10px;text-align:center}.emojiHelp{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.35}.emojiPresetRow{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.emojiPreset{border:1px solid var(--line2);background:#f8fffc;border-radius:10px;font-size:20px;padding:5px 7px;cursor:pointer}.emojiPreset:hover{background:var(--mintSoft);border-color:var(--mint)}
+.summaryText{width:100%;min-height:260px;border:1px solid var(--line2);border-radius:14px;padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.55;white-space:pre-wrap;background:#fbfffd;color:var(--text)}
+.summaryMeta{font-size:12px;color:var(--muted);margin:-4px 0 10px;line-height:1.45}
 
 .quickPanel{margin-top:12px}.quickGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.quickAction{border:1px solid var(--line2);background:#fbfffd;border-radius:14px;padding:9px 8px;cursor:grab;user-select:none;font-size:12px;font-weight:800;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(34,77,60,.05);touch-action:none}.quickAction:hover{background:var(--mint2);border-color:var(--mint)}.quickAction:active{cursor:grabbing}.quickHint{font-size:11px;color:var(--muted);line-height:1.45;margin-top:8px}.quickManageRow{display:flex;gap:8px;margin-top:8px}.quickManageRow .btn{flex:1}.quickGhost{position:fixed;z-index:3000;pointer-events:none;border:1px solid var(--mint);background:white;border-radius:14px;padding:10px 12px;font-size:13px;font-weight:900;box-shadow:0 18px 45px rgba(22,80,60,.22);transform:translate(-50%,-50%)}.quickItem{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:7px;background:#fbfffd}.quickItem b{font-size:13px}.quickItem small{display:block;color:var(--muted);font-size:11px}.quickEdit,.quickRemove{border:1px solid var(--line2);background:var(--panel2);border-radius:9px;padding:4px 8px;cursor:pointer}.quickRemove{background:#fff2f2;color:var(--red);border-color:#ffd1d1}.soundRow{display:flex;gap:8px;margin-top:8px}.dropHot{outline:3px dashed rgba(35,180,134,.55);outline-offset:-6px;background:#f0fbf6!important}.alertBadge{display:inline-flex;align-items:center;gap:5px;font-size:11px;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;border-radius:999px;padding:4px 8px;margin-top:8px}
 #printArea{display:none}
@@ -99,6 +101,17 @@ button,input,textarea,select{font:inherit}
 <div class="modalBtns"><button class="btn" id="doneCancel">ยกเลิก</button><button class="btn primary" id="doneSave">ยืนยัน</button></div>
 </div></div>
 
+<div class="modalBg" id="urgentModal"><div class="modal"><h3>จัดการงานเร่งด่วน</h3>
+  <div id="urgentActionInfo" class="urgentActionInfo"></div>
+  <div class="urgentActionBtns">
+    <button class="btn" id="urgentJumpBtn">ไปที่งาน</button>
+    <button class="btn primary" id="urgentEditBtn">แก้ไขงาน</button>
+    <button class="btn" id="urgentDoneBtn">✓ ทำแล้ว</button>
+    <button class="btn danger" id="urgentDeleteBtn">ลบงาน</button>
+  </div>
+  <div class="modalBtns"><button class="btn" id="urgentCloseBtn">ปิด</button></div>
+</div></div>
+
 <div class="modalBg" id="syncModal"><div class="modal"><h3>☁️ ตั้งค่า Sync ทุกเครื่อง</h3>
 <div class="syncWarn">ใช้ Firebase Realtime Database ฟรีได้ในคลินิกเล็ก ๆ ใส่ config จาก Firebase แล้วทุกเครื่องที่เปิดลิงก์เดียวกันจะเห็นข้อมูลชุดเดียวกัน</div>
 <div class="field"><label>สถานะ</label><div id="syncStateText"><span class="syncDot"></span>Local only</div></div>
@@ -112,6 +125,15 @@ button,input,textarea,select{font:inherit}
 </div>
 <div class="syncSmall">หมายเหตุ: ถ้าเพิ่งเปิดครั้งแรก ระบบจะอัปโหลดข้อมูลในเครื่องนี้ขึ้น cloud เป็นฐานข้อมูลแรก</div>
 <div class="modalBtns"><button class="btn danger" id="syncClearBtn">ปิด Sync</button><button class="btn" id="syncCancelBtn">ยกเลิก</button><button class="btn primary" id="syncSaveBtn">บันทึกและเชื่อมต่อ</button></div>
+</div></div>
+<div class="modalBg" id="summaryModal"><div class="modal" style="width:620px"><h3>สรุปการดูแล</h3>
+<div class="row" style="align-items:flex-end;margin-bottom:10px">
+  <div class="field"><label>ช่วงวันที่</label><select id="summaryDateMode"><option value="today">วันนี้</option><option value="yesterday">เมื่อวาน</option><option value="custom">เลือกวันเอง</option></select></div>
+  <div class="field" id="summaryCustomWrap" style="display:none"><label>เลือกวันที่</label><input type="date" id="summaryDatePicker"></div>
+</div>
+<div class="summaryMeta" id="summaryMeta"></div>
+<textarea id="summaryText" class="summaryText" readonly></textarea>
+<div class="modalBtns"><button class="btn" id="summaryClose">ปิด</button><button class="btn primary" id="summaryCopy">คัดลอกข้อความ</button></div>
 </div></div>
 <div id="printArea"></div>
 
@@ -382,14 +404,34 @@ function createQuickEvent(q,pid,start){
 function setStatus(msg,color='var(--muted)'){const st=$id('status'); if(!st)return; st.textContent=msg;st.style.color=color;clearTimeout(setStatus.t);setStatus.t=setTimeout(()=>{st.textContent=''},4500)}
 function eventStatus(ev){if(ev.done)return 'done';const n=Date.now();if(ev.start+ev.dur*MIN<n)return 'overdue';if(ev.start>=n&&ev.start<=n+60*MIN)return 'soon';return ''}
 function render(){renderSummary();buildFixed();buildLanes();renderPanel();renderQuickActions();updateNow();save(false)}
-function renderSummary(){const n=Date.now(), tod=startOfDayMs(n), todEnd=tod+DAY;const today=state.events.filter(e=>e.start>=tod&&e.start<todEnd);const overdue=state.events.filter(e=>!e.done&&e.start+e.dur*MIN<n);const soon=state.events.filter(e=>!e.done&&e.start>=n&&e.start<=n+60*MIN);summary.innerHTML=`<div class="card stat"><b>${state.patients.length}</b><span>สัตว์ป่วย</span></div><div class="card stat"><b>${today.length}</b><span>งานวันนี้</span></div><div class="card stat bad"><b>${overdue.length}</b><span>งานเกินเวลา</span></div><div class="card stat warn"><b>${soon.length}</b><span>งานใน 1 ชม.</span></div>`}
+function urgentChip(e,kind){const p=state.patients.find(x=>x.id===e.pid)||{};const late=Math.max(0,Math.floor((Date.now()-(e.start+e.dur*MIN))/MIN));const label=kind==='overdue'?`เกิน ${late} นาที`:`${timeText(e.start)}`;return `<button class="urgentChip ${kind} manage" data-urgent-eid="${e.id}" title="คลิกเพื่อจัดการงานนี้"><b>${kind==='overdue'?'⚠️':'⏰'}</b><span>${esc(label)} · ${esc(p.emoji||'🐾')} ${esc(p.name||'-')} · ${esc(e.name)}</span></button>`}
+function renderSummary(){const n=Date.now(), tod=startOfDayMs(n), todEnd=tod+DAY;const today=state.events.filter(e=>e.start>=tod&&e.start<todEnd);const overdue=state.events.filter(e=>!e.done&&e.start+e.dur*MIN<n).sort((a,b)=>a.start-b.start);const soon=state.events.filter(e=>!e.done&&e.start>=n&&e.start<=n+60*MIN).sort((a,b)=>a.start-b.start);const urgent=[...overdue.slice(0,6).map(e=>urgentChip(e,'overdue')),...soon.slice(0,4).map(e=>urgentChip(e,'soon'))];const more=Math.max(0,overdue.length+soon.length-10);summary.innerHTML=`<div class="card stat"><b>${state.patients.length}</b><span>สัตว์ป่วย</span></div><div class="card stat clickable" data-focus="today" title="คลิกเพื่อไฮไลต์งานวันนี้"><b>${today.length}</b><span>งานวันนี้</span></div><div class="card stat bad"><b>${overdue.length}</b><span>เกินเวลา</span></div><div class="card stat warn"><b>${soon.length}</b><span>ใน 1 ชม.</span></div><div class="card urgentBoard"><div class="urgentHead"><b>งานเร่งด่วนด้านบน</b><span>แดง = เกินเวลา · เหลือง = ใกล้ถึง</span></div><div class="urgentList">${urgent.length?urgent.join(''):'<div class="urgentChip empty">ยังไม่มีงานเกินเวลาหรืองานใน 1 ชั่วโมง</div>'}${more?`<div class="urgentMore">+${more} รายการ</div>`:''}</div></div>`}
+function matchingFocusEvents(type){const n=Date.now(), tod=startOfDayMs(n), todEnd=tod+DAY;let list=[];if(type==='overdue')list=state.events.filter(e=>!e.done&&e.start+e.dur*MIN<n&&inRange(e));else if(type==='soon')list=state.events.filter(e=>!e.done&&e.start>=n&&e.start<=n+60*MIN&&inRange(e));else if(type==='today')list=state.events.filter(e=>e.start>=tod&&e.start<todEnd&&inRange(e));return list.sort((a,b)=>a.start-b.start)}
+function focusEvents(type){const list=matchingFocusEvents(type);document.querySelectorAll('.ev.focusFlash').forEach(el=>el.classList.remove('focusFlash'));if(!list.length){const label=type==='overdue'?'งานเกินเวลา':type==='soon'?'งานใน 1 ชั่วโมง':'งานวันนี้';setStatus(`ไม่พบ${label}ในช่วง timeline ที่แสดง`,'var(--amber)');return}selectedId=list[0].id;const first=list[0];mainScroll.scrollTo({top:Math.max(0,yFromTs(first.start)-160),behavior:'smooth'});setTimeout(()=>{document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'));list.forEach(e=>{const el=document.querySelector(`.ev[data-eid="${e.id}"]`);if(el){el.classList.add('focusFlash');if(e.id===first.id)el.classList.add('selected')}});const label=type==='overdue'?'งานเกินเวลา':type==='soon'?'งานใน 1 ชั่วโมง':'งานวันนี้';setStatus(`พบ${label} ${list.length} รายการ`,'var(--green)')},260)}
 function buildFixed(){dateInner=document.getElementById('date-inner');timeInner=document.getElementById('time-inner');dateInner.innerHTML='';timeInner.innerHTML='';const todayStr=dif(Date.now());for(let day=0;day<TOTAL_DAYS;day++){const d=new Date(rangeStartMs+day*DAY);const db=document.createElement('div');db.className='dateBlock'+(dif(d)===todayStr?' today':'');db.innerHTML=`<div class="dateText">${thaiDateB(d)}</div>`;dateInner.appendChild(db)}for(let i=0;i<TOTAL_H;i++){const t=document.createElement('div');t.className='timeLabel';t.textContent=`${pad(i%24)}:00`;timeInner.appendChild(t)}}
-function buildLanes(){const lanes=document.getElementById('lanes');lanes.innerHTML='<div id="nowLine"></div>';state.patients.forEach(p=>{const lane=document.createElement('div');lane.className='lane';lane.dataset.pid=p.id;const c=COLORS[p.ci%COLORS.length];lane.innerHTML=`<div class="laneHeader"><div class="avatar" style="background:${c}">${esc(p.emoji||typeEmoji(p.type))}</div><div class="pInfo"><div class="pName">${esc(p.name)}</div><div class="pMeta">${esc(p.type||'สัตว์')} · ${esc(p.hn||'-')} · กรง ${esc(p.cage||'-')}</div></div><div class="hActions"><button class="mini" data-act="print" data-pid="${p.id}">🖨</button><button class="mini" data-act="addEv" data-pid="${p.id}">+</button><button class="mini" data-act="editPt" data-pid="${p.id}">แก้</button><button class="mini danger" data-act="delPt" data-pid="${p.id}">ลบ</button></div></div>`;for(let i=0;i<TOTAL_H;i++){const cell=document.createElement('div');cell.className='hourCell';cell.dataset.pid=p.id;cell.dataset.hour=i;lane.appendChild(cell)}state.events.filter(e=>e.pid===p.id&&inRange(e)).sort((a,b)=>a.start-b.start).forEach(e=>lane.appendChild(makeEvent(e,p,c)));lanes.appendChild(lane)});const add=document.createElement('div');add.className='addLane';add.innerHTML='<div class="addHead" id="addLaneBtn">+<br><small>สัตว์</small></div>';for(let i=0;i<TOTAL_H;i++){const c=document.createElement('div');c.className='hourCell';add.appendChild(c)}lanes.appendChild(add);if(selectedId){const el=document.querySelector(`.ev[data-eid="${selectedId}"]`);if(el)el.classList.add('selected')}}
+function buildLanes(){const lanes=document.getElementById('lanes');lanes.innerHTML='<div id="nowLine"></div>';state.patients.forEach(p=>{const lane=document.createElement('div');lane.className='lane';lane.dataset.pid=p.id;const c=COLORS[p.ci%COLORS.length];lane.innerHTML=`<div class="laneHeader"><div class="avatar" style="background:${c}">${esc(p.emoji||typeEmoji(p.type))}</div><div class="pInfo"><div class="pName">${esc(p.name)}</div><div class="pMeta">${esc(p.type||'สัตว์')} · ${esc(p.hn||'-')} · กรง ${esc(p.cage||'-')}</div></div><div class="hActions"><button class="mini" data-act="summary" data-pid="${p.id}" title="สรุปวันนี้เพื่อคัดลอก">สรุป</button><button class="mini" data-act="print" data-pid="${p.id}" title="พิมพ์วันนี้">🖨</button><button class="mini" data-act="addEv" data-pid="${p.id}" title="เพิ่มงาน">+</button><button class="mini" data-act="editPt" data-pid="${p.id}">แก้</button><button class="mini danger" data-act="delPt" data-pid="${p.id}">ลบ</button></div></div>`;for(let i=0;i<TOTAL_H;i++){const cell=document.createElement('div');cell.className='hourCell';cell.dataset.pid=p.id;cell.dataset.hour=i;lane.appendChild(cell)}state.events.filter(e=>e.pid===p.id&&inRange(e)).sort((a,b)=>a.start-b.start).forEach(e=>lane.appendChild(makeEvent(e,p,c)));lanes.appendChild(lane)});const add=document.createElement('div');add.className='addLane';add.innerHTML='<div class="addHead" id="addLaneBtn">+<br><small>สัตว์</small></div>';for(let i=0;i<TOTAL_H;i++){const c=document.createElement('div');c.className='hourCell';add.appendChild(c)}lanes.appendChild(add);if(selectedId){const el=document.querySelector(`.ev[data-eid="${selectedId}"]`);if(el)el.classList.add('selected')}}
 function makeEvent(ev,p,c){const el=document.createElement('div');const st=eventStatus(ev);el.className='ev '+st+(selectedId===ev.id?' selected':'');el.dataset.eid=ev.id;el.style.top=yFromTs(ev.start)+'px';el.style.height=Math.max(32,ev.dur*MPX)+'px';el.style.borderLeftColor=c;el.style.background=ev.cat==='medicine'?'#eef7ff':ev.cat==='procedure'?'#f6f0ff':'#effaf5';el.style.color='#1f342d';
   const quickEdit=`<button class="evEditMini" data-edit-eid="${ev.id}" title="แก้ไขงาน">✎</button>`;
   const quickDone=!ev.done?`<button class="evDoneMini" data-done-eid="${ev.id}" title="บันทึกผู้ทำ">✓</button>`:'';
   el.innerHTML=`${quickEdit}${quickDone}<div class="evName">${esc(ev.name)}</div><div class="evTime">${ds(ev.start)} ${timeText(ev.start)}–${timeText(ev.start+ev.dur*MIN)}</div>${ev.note?`<div class="evNote">${esc(ev.note)}</div>`:''}${ev.done?`<div class="doneRow">✓ ${esc(ev.doneBy||'ทำแล้ว')} ${esc(ev.doneAt||'')}${ev.doneNote?' · '+esc(ev.doneNote):''}</div>`:''}<div class="resizeH"></div>`;return el}
-function renderPanel(){const n=Date.now(), end=n+180*MIN;const list=state.events.filter(e=>!e.done&&e.start+e.dur*MIN>=n-240*MIN&&e.start<=end).sort((a,b)=>a.start-b.start).slice(0,12);const box=document.getElementById('taskList');if(!list.length){box.innerHTML='<div class="hint">ไม่มีงานใกล้ถึงเวลา</div>';return}box.innerHTML=list.map(e=>{const p=state.patients.find(x=>x.id===e.pid)||{};const st=eventStatus(e);return `<div class="taskItem" style="border-left:4px solid ${st==='overdue'?'var(--red)':st==='soon'?'var(--amber)':'var(--mint)'}"><b>${esc(timeText(e.start))} · ${esc(e.name)}</b><div>${esc(p.name||'-')} · ${esc(p.cage||'-')} ${e.note?'· '+esc(e.note):''}</div></div>`}).join('')}
+function renderPanel(){const n=Date.now(), end=n+180*MIN;const list=state.events.filter(e=>!e.done&&e.start+e.dur*MIN>=n-240*MIN&&e.start<=end).sort((a,b)=>a.start-b.start).slice(0,12);const box=document.getElementById('taskList');if(!list.length){box.innerHTML='<div class="hint">ไม่มีงานใกล้ถึงเวลา</div>';return}box.innerHTML=list.map(e=>{const p=state.patients.find(x=>x.id===e.pid)||{};const st=eventStatus(e);return `<div class="taskItem clickable" data-jump-eid="${e.id}" style="border-left:4px solid ${st==='overdue'?'var(--red)':st==='soon'?'var(--amber)':'var(--mint)'}" title="คลิกเพื่อไปที่งานนี้"><b>${esc(timeText(e.start))} · ${esc(e.name)}</b><div>${esc(p.name||'-')} · ${esc(p.cage||'-')} ${e.note?'· '+esc(e.note):''}</div></div>`}).join('')}
+function jumpToEvent(id){const ev=state.events.find(e=>Number(e.id)===Number(id));if(!ev)return;if(!inRange(ev)){setStatus('งานนี้อยู่นอกช่วง timeline ที่แสดง','var(--amber)');return}selectedId=ev.id;mainScroll.scrollTo({top:Math.max(0,yFromTs(ev.start)-160),behavior:'smooth'});setTimeout(()=>{document.querySelectorAll('.ev.selected,.ev.focusFlash').forEach(x=>x.classList.remove('selected','focusFlash'));const el=document.querySelector(`.ev[data-eid="${ev.id}"]`);if(el){el.classList.add('selected','focusFlash')}},250)}
+let urgentActionId=null;
+function openUrgentAction(id){
+  const ev=state.events.find(e=>Number(e.id)===Number(id));
+  if(!ev){setStatus('ไม่พบงานนี้แล้ว','var(--red)');return}
+  urgentActionId=Number(ev.id);
+  selectedId=ev.id;
+  const p=state.patients.find(x=>Number(x.id)===Number(ev.pid))||{};
+  const now=Date.now();
+  const late=Math.max(0,Math.floor((now-(ev.start+ev.dur*MIN))/MIN));
+  const status=ev.done?'✓ ทำแล้ว':(ev.start+ev.dur*MIN<now?`⚠️ เกินเวลา ${late} นาที`:(ev.start<=now+60*MIN?'⏰ ใกล้ถึงเวลา':'รอดำเนินการ'));
+  const info=$id('urgentActionInfo');
+  if(info)info.innerHTML=`<b>${esc(p.emoji||'🐾')} ${esc(p.name||'-')} · ${esc(ev.name)}</b><div>${esc(ds(ev.start))} ${esc(timeText(ev.start))}–${esc(timeText(ev.start+ev.dur*MIN))} · ${esc(status)}</div>${ev.note?`<div>รายละเอียด: ${esc(ev.note)}</div>`:''}${ev.done?`<div>ผู้ทำ: ${esc(ev.doneBy||'-')} ${esc(ev.doneAt||'')}${ev.doneNote?' · '+esc(ev.doneNote):''}</div>`:''}`;
+  $id('urgentModal').classList.add('open');
+}
+function closeUrgentAction(){urgentActionId=null;$id('urgentModal').classList.remove('open')}
+function urgentCurrentEvent(){return state.events.find(e=>Number(e.id)===Number(urgentActionId))}
 function updateNow(){const nl=document.getElementById('nowLine');if(nl)nl.style.top=yFromTs(Date.now())+'px'}
 function scrollToNow(){const ms=document.getElementById('main-scroll');ms.scrollTop=Math.max(0,yFromTs(Date.now())-ms.clientHeight/2)}
 function syncFixedScroll(){document.getElementById('left-date').scrollTop=mainScroll.scrollTop;document.getElementById('left-time').scrollTop=mainScroll.scrollTop}
@@ -621,6 +663,87 @@ function runCommand(txt){
 }
 function printPatientDay(pid,date=Date.now()){const p=state.patients.find(x=>x.id===pid);if(!p)return;const st=startOfDayMs(date), en=st+DAY;const evs=state.events.filter(e=>e.pid===pid&&e.start>=st&&e.start<en).sort((a,b)=>a.start-b.start);printArea.innerHTML=`<div class="printHeader"><div class="printBrand"><img class="printLogo" src="${LOGO_DATA}"><div><div class="printTitle">IPD งานประจำวัน</div><div>${esc(p.name)} · ${esc(p.type||'')} · HN ${esc(p.hn||'-')} · กรง ${esc(p.cage||'-')}</div></div></div><div class="printMeta">วันที่ ${dif(st)}<br>พิมพ์ ${new Date().toLocaleString('th-TH')}</div></div><div class="printInfo"><b>Dx:</b> ${esc(p.dx||'-')} &nbsp; <b>หมอ:</b> ${esc(p.doctor||'-')}</div><table class="printTable"><thead><tr><th style="width:80px">เวลา</th><th>รายการ</th><th>รายละเอียด</th><th style="width:110px">ผู้ทำ</th><th style="width:160px">หมายเหตุ</th></tr></thead><tbody>${evs.length?evs.map(e=>`<tr><td>${timeText(e.start)}</td><td>${esc(e.name)}</td><td>${esc(e.note||'')}</td><td>${esc(e.doneBy||'')}</td><td>${esc(e.doneNote||'')}</td></tr>`).join(''):'<tr><td colspan="5">ไม่มีงานวันนี้</td></tr>'}</tbody></table><div class="signRow"><div class="signBox">ผู้ช่วย</div><div class="signBox">สัตวแพทย์</div><div class="signBox">ผู้ตรวจสอบ</div></div>`;window.print()}
 
+let currentSummaryPid=null;
+function isoDateLocal(ts=Date.now()){
+  const d=new Date(ts);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function parseDateInputLocal(v){
+  const [y,m,d]=(v||isoDateLocal()).split('-').map(Number);
+  return new Date(y,m-1,d).getTime();
+}
+function selectedSummaryDateMs(){
+  const mode=$id('summaryDateMode')?.value||'today';
+  if(mode==='yesterday')return startOfDayMs(Date.now()-DAY);
+  if(mode==='custom')return startOfDayMs(parseDateInputLocal($id('summaryDatePicker')?.value));
+  return startOfDayMs(Date.now());
+}
+function eventStatusText(e){
+  if(e.done){
+    const by=e.doneBy?` โดย ${e.doneBy}`:'';
+    const at=e.doneAt?` เวลา ${e.doneAt}`:'';
+    return `ทำแล้ว${by}${at}`.trim();
+  }
+  return 'ยังไม่ได้ทำ';
+}
+function careSummaryText(pid,date=Date.now()){
+  const p=state.patients.find(x=>x.id===pid); if(!p)return '';
+  const st=startOfDayMs(date), en=st+DAY;
+  const evs=state.events.filter(e=>e.pid===pid&&e.start>=st&&e.start<en).sort((a,b)=>a.start-b.start);
+  const done=evs.filter(e=>e.done).length;
+  const pending=evs.length-done;
+  const lines=[];
+  lines.push(`สรุปการดูแลประจำวัน`);
+  lines.push(`สัตว์ป่วย: ${p.emoji||'🐾'} ${p.name}`);
+  lines.push(`วันที่: ${thaiDateB(new Date(st))}`);
+  lines.push(`รวมรายการ: ${evs.length} | ทำแล้ว: ${done} | ยังไม่ทำ: ${pending}`);
+  lines.push('');
+  lines.push('รายการดูแล');
+  lines.push('------------------------------');
+  if(!evs.length){
+    lines.push('- ไม่มีรายการดูแลในวันที่เลือก');
+    return lines.join('\n');
+  }
+  evs.forEach((e,i)=>{
+    lines.push(`${i+1}. ${timeText(e.start)} - ${e.name}`);
+    if(e.note)lines.push(`   รายละเอียด: ${e.note}`);
+    lines.push(`   สถานะ: ${eventStatusText(e)}`);
+    if(e.doneNote)lines.push(`   หมายเหตุผู้ทำ: ${e.doneNote}`);
+    lines.push('');
+  });
+  lines.push('สรุปท้ายเวชระเบียน:');
+  lines.push(`- ทำครบ ${done}/${evs.length} รายการ${pending?` | ค้าง ${pending} รายการ`:''}`);
+  return lines.join('\n').trim();
+}
+function refreshCareSummary(){
+  if(!currentSummaryPid)return;
+  const date=selectedSummaryDateMs();
+  const p=state.patients.find(x=>x.id===currentSummaryPid); if(!p)return;
+  $id('summaryMeta').textContent=`${p.emoji||'🐾'} ${p.name} · ${thaiDateB(new Date(date))}`;
+  $id('summaryText').value=careSummaryText(currentSummaryPid,date);
+}
+function openCareSummary(pid,date=Date.now()){
+  const p=state.patients.find(x=>x.id===pid); if(!p)return;
+  currentSummaryPid=pid;
+  const mode=$id('summaryDateMode');
+  const picker=$id('summaryDatePicker');
+  const wrap=$id('summaryCustomWrap');
+  if(mode)mode.value='today';
+  if(picker)picker.value=isoDateLocal();
+  if(wrap)wrap.style.display='none';
+  refreshCareSummary();
+  $id('summaryModal').classList.add('open');
+  setTimeout(()=>{$id('summaryText').focus();$id('summaryText').select()},50);
+}
+async function copyCareSummary(){
+  refreshCareSummary();
+  const ta=$id('summaryText'); const txt=ta.value||'';
+  try{await navigator.clipboard.writeText(txt);setStatus('คัดลอกสรุปแล้ว','var(--green)')}
+  catch(e){ta.focus();ta.select();document.execCommand('copy');setStatus('คัดลอกสรุปแล้ว','var(--green)')}
+}
+
+
+
 
 function getQuickActions(){if(!Array.isArray(state.quickActions)||!state.quickActions.length)state.quickActions=[...DEFAULT_QUICK_ACTIONS];return state.quickActions}
 function renderQuickActions(){
@@ -700,8 +823,19 @@ const mainScroll=document.getElementById('main-scroll');
 mainScroll.addEventListener('scroll',syncFixedScroll);
 mainScroll.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;const evEl=e.target.closest('.ev');if(evEl&&!drag&&!resize){const ev=state.events.find(x=>x.id===+evEl.dataset.eid);if(ev)showTT(ev,e.clientX,e.clientY)}});
 mainScroll.addEventListener('mouseleave',hideTT);
-mainScroll.addEventListener('click',e=>{const editBtn=e.target.closest('[data-edit-eid]');if(editBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(editBtn.dataset.editEid));if(ev)openEventModal(ev,ev.pid);return}const doneBtn=e.target.closest('[data-done-eid]');if(doneBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(doneBtn.dataset.doneEid));if(ev)openDone(ev);return}const btn=e.target.closest('button[data-act]');if(btn){const pid=+btn.dataset.pid, act=btn.dataset.act;if(act==='print')printPatientDay(pid);if(act==='addEv')openEventModal(null,pid,Date.now());if(act==='editPt')openPatientModal(state.patients.find(p=>p.id===pid));if(act==='delPt')deletePatient(pid);return}if(e.target.closest('#addLaneBtn'))return openPatientModal(null);const evEl=e.target.closest('.ev');if(evEl){selectedId=+evEl.dataset.eid;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'));evEl.classList.add('selected');return}if(!e.target.closest('.laneHeader')){selectedId=null;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'))}});
+mainScroll.addEventListener('click',e=>{const editBtn=e.target.closest('[data-edit-eid]');if(editBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(editBtn.dataset.editEid));if(ev)openEventModal(ev,ev.pid);return}const doneBtn=e.target.closest('[data-done-eid]');if(doneBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(doneBtn.dataset.doneEid));if(ev)openDone(ev);return}const btn=e.target.closest('button[data-act]');if(btn){const pid=+btn.dataset.pid, act=btn.dataset.act;if(act==='summary')openCareSummary(pid);if(act==='print')printPatientDay(pid);if(act==='addEv')openEventModal(null,pid,Date.now());if(act==='editPt')openPatientModal(state.patients.find(p=>p.id===pid));if(act==='delPt')deletePatient(pid);return}if(e.target.closest('#addLaneBtn'))return openPatientModal(null);const evEl=e.target.closest('.ev');if(evEl){selectedId=+evEl.dataset.eid;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'));evEl.classList.add('selected');return}if(!e.target.closest('.laneHeader')){selectedId=null;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'))}});
 mainScroll.addEventListener('dblclick',e=>{const evEl=e.target.closest('.ev');if(evEl){e.preventDefault();e.stopPropagation();hideTT();const ev=state.events.find(x=>x.id===+evEl.dataset.eid);if(ev)openEventModal(ev,ev.pid);return}const cell=e.target.closest('.hourCell[data-pid]');if(cell){const lane=cell.closest('.lane');const rect=lane.getBoundingClientRect();const y=e.clientY-rect.top;const ts=clampTs(roundTs(tsFromY(y),15),30);openEventModal(null,+cell.dataset.pid,ts)}});
+$id('summaryClose').onclick=()=> $id('summaryModal').classList.remove('open');
+$id('summaryCopy').onclick=copyCareSummary;
+$id('summaryDateMode').onchange=()=>{const custom=$id('summaryDateMode').value==='custom';$id('summaryCustomWrap').style.display=custom?'block':'none';if(custom&&!$id('summaryDatePicker').value)$id('summaryDatePicker').value=isoDateLocal();refreshCareSummary()};
+$id('summaryDatePicker').onchange=refreshCareSummary;
+$id('urgentCloseBtn').onclick=closeUrgentAction;
+$id('urgentJumpBtn').onclick=()=>{const ev=urgentCurrentEvent();if(ev){closeUrgentAction();jumpToEvent(ev.id)}};
+$id('urgentEditBtn').onclick=()=>{const ev=urgentCurrentEvent();if(ev){closeUrgentAction();openEventModal(ev,ev.pid)}};
+$id('urgentDoneBtn').onclick=()=>{const ev=urgentCurrentEvent();if(ev){closeUrgentAction();openDone(ev)}};
+$id('urgentDeleteBtn').onclick=()=>{const ev=urgentCurrentEvent();if(ev&&confirm('ลบงานนี้?')){deleteEvent(ev.id);closeUrgentAction();setStatus('ลบงานแล้ว','var(--red)')}};
+summary.addEventListener('click',e=>{const urgent=e.target.closest('[data-urgent-eid]');if(urgent){openUrgentAction(urgent.dataset.urgentEid);return}const card=e.target.closest('[data-focus]');if(card)focusEvents(card.dataset.focus)});
+$id('taskList').addEventListener('click',e=>{const item=e.target.closest('[data-jump-eid]');if(item)jumpToEvent(item.dataset.jumpEid)});
 mainScroll.addEventListener('mousedown',e=>{
   if(e.target.closest('[data-done-eid], [data-edit-eid]')){e.stopPropagation();return}
   const evEl=e.target.closest('.ev');if(!evEl)return;

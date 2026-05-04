@@ -1,0 +1,88 @@
+{
+  "patients": [
+    {
+      "id": 1,
+      "name": "น้องส้ม",
+      "hn": "HN001",
+      "cage": "ICU-1",
+      "type": "แมว",
+      "dx": "ไข้/กินอาหารลดลง",
+      "doctor": "น.สพ.ก้อง",
+      "ci": 0
+    },
+    {
+      "id": 2,
+      "name": "น้องดำ",
+      "hn": "HN002",
+      "cage": "Ward A",
+      "type": "สุนัข",
+      "dx": "post-op monitoring",
+      "doctor": "สพ.ญ.แพร",
+      "ci": 1
+    },
+    {
+      "id": 3,
+      "name": "น้องขาว",
+      "hn": "HN003",
+      "cage": "Exotic-1",
+      "type": "กระต่าย",
+      "dx": "GI stasis",
+      "doctor": "น.สพ.ก้อง",
+      "ci": 2
+    }
+  ],
+  "events": [
+    {
+      "id": 1,
+      "pid": 1,
+      "name": "กินยา",
+      "startMin": 300,
+      "dur": 30,
+      "note": "amoxicillin 50mg",
+      "done": false,
+      "doneBy": "",
+      "doneAt": "",
+      "doneNote": ""
+    },
+    {
+      "id": 2,
+      "pid": 2,
+      "name": "ฉีดยา",
+      "startMin": 780,
+      "dur": 45,
+      "note": "วิตามิน B12",
+      "done": true,
+      "doneBy": "น.สพ.ก้อง",
+      "doneAt": "13:12",
+      "doneNote": "สัตว์ให้ความร่วมมือดี"
+    },
+    {
+      "id": 3,
+      "pid": 3,
+      "name": "วัดความดัน",
+      "startMin": 1140,
+      "dur": 60,
+      "note": "ก่อนอาหารเย็น",
+      "done": false,
+      "doneBy": "",
+      "doneAt": "",
+      "doneNote": ""
+    },
+    {
+      "id": 4,
+      "pid": 1,
+      "name": "เปลี่ยนน้ำเกลือ",
+      "startMin": 600,
+      "dur": 20,
+      "note": "N/S 0.9% 500ml",
+      "done": false,
+      "doneBy": "",
+      "doneAt": "",
+      "doneNote": ""
+    }
+  ],
+  "nPid": 4,
+  "nEid": 5,
+  "audit": [],
+  "exportedAt": "2026-05-04T04:56:43.370Z"
+}

@@ -142,6 +142,9 @@ button,input,textarea,select{font:inherit}
 <div class="field"><label>ชื่อรายการ</label><input id="quickName" placeholder="เช่น กินข้าว / ทำแผล"/></div>
 <div class="field"><label>ประเภท</label><select id="quickCat"><option value="routine">ทั่วไป</option><option value="medicine">ยา</option><option value="procedure">หัตถการ</option><option value="check">ตรวจ/วัดค่า</option></select></div>
 <div class="field"><label>รายละเอียดเริ่มต้น (ไม่บังคับ)</label><textarea id="quickNote" placeholder="เช่น อาหารเปียก / ล้าง NSS"></textarea></div>
+<div class="field"><label>ทำซ้ำเมื่อวาง Quick action</label><select id="quickRepeat"><option value="none">ไม่ซ้ำ</option><option value="daily">ทุกวัน</option><option value="interval">ทุก X ชั่วโมง</option><option value="bid">เช้า / เย็น</option><option value="tid">เช้า / กลางวัน / เย็น</option><option value="sid">วันละครั้ง ตามเวลาที่วาง</option></select></div>
+<div class="row" id="quickRepeatBox"><div class="field"><label>ทุกกี่ชั่วโมง</label><input id="quickIntervalHours" type="number" min="1" step="1" value="6"/></div><div class="field"><label>จำนวนครั้ง / วัน</label><input id="quickRepeatCount" type="number" min="1" step="1" value="1"/></div></div>
+<div class="hint" style="margin-top:-4px;margin-bottom:8px">ถ้า Quick action ตั้งซ้ำ เมื่อลากไปวางจะสร้างเป็นชุด และสามารถลบทั้งชุดได้</div>
 <div class="modalBtns" style="justify-content:flex-start;margin-top:0;margin-bottom:12px"><button class="btn primary" id="quickSaveBtn">+ เพิ่ม/บันทึก</button><button class="btn" id="quickClearBtn">ล้างฟอร์ม</button></div>
 <div id="quickList"></div>
 <div class="hint">รายการนี้ใช้สำหรับลากไปวางในตาราง และจะบันทึกไว้ในเครื่อง/Sync ถ้าเปิด cloud</div>
@@ -400,8 +403,19 @@ function checkDueAlerts(){
 function createQuickEvent(q,pid,start){
   if(!pid||!q||!q.name)return;
   const dur=Math.max(5,Number(q.dur)||30);
-  const ev={id:state.nextEid++,pid:+pid,name:q.name,start:clampTs(roundTs(start,15),dur),dur,cat:q.cat||'routine',note:q.note||'',done:false,doneBy:'',doneAt:'',doneNote:''};
-  state.events.push(ev);selectedId=ev.id;log('quick_event',{id:ev.id,name:ev.name,pid:ev.pid});render();setStatus(`เพิ่ม ${ev.name} ${ds(ev.start)} ${timeText(ev.start)}`,'var(--green)')
+  const base=clampTs(roundTs(start,15),dur);
+  const mode=q.repeat||'none';
+  const starts=repeatStarts(mode,base,dur,q.repeatCount||1,q.intervalHours||6);
+  const repeatGroupId=starts.length>1?newRepeatGroupId():'';
+  let first=null;
+  starts.forEach(st=>{
+    const ev={id:state.nextEid++,pid:+pid,name:q.name,start:st,dur,cat:q.cat||'routine',note:q.note||'',repeatGroupId,done:false,doneBy:'',doneAt:'',doneNote:''};
+    state.events.push(ev); if(!first)first=ev;
+  });
+  if(first)selectedId=first.id;
+  log('quick_event',{name:q.name,pid,created:starts.length,repeatGroupId});
+  render();
+  setStatus(`เพิ่ม ${q.name} ${starts.length} รายการ`,'var(--green)')
 }
 function setStatus(msg,color='var(--muted)'){const st=$id('status'); if(!st)return; st.textContent=msg;st.style.color=color;clearTimeout(setStatus.t);setStatus.t=setTimeout(()=>{st.textContent=''},4500)}
 function eventStatus(ev){if(ev.done)return 'done';const n=Date.now();if(ev.start+ev.dur*MIN<n)return 'overdue';if(ev.start>=n&&ev.start<=n+60*MIN)return 'soon';return ''}
@@ -434,7 +448,14 @@ function openUrgentAction(id){
 }
 function closeUrgentAction(){urgentActionId=null;$id('urgentModal').classList.remove('open')}
 function urgentCurrentEvent(){return state.events.find(e=>Number(e.id)===Number(urgentActionId))}
-function updateNow(){const nl=document.getElementById('nowLine');if(nl)nl.style.top=yFromTs(Date.now())+'px'}
+function updateNow(){
+  const nl=document.getElementById('nowLine');
+  if(!nl)return;
+  const now=Date.now();
+  if(now<rangeStartMs||now>rangeEndMs){nl.style.display='none';return}
+  nl.style.display='block';
+  nl.style.top=yFromTs(now)+'px';
+}
 function scrollToNow(){const ms=document.getElementById('main-scroll');ms.scrollTop=Math.max(0,yFromTs(Date.now())-ms.clientHeight/2)}
 function syncFixedScroll(){document.getElementById('left-date').scrollTop=mainScroll.scrollTop;document.getElementById('left-time').scrollTop=mainScroll.scrollTop}
 function openEventModal(ev,pid,startTs){
@@ -459,18 +480,17 @@ function openEventModal(ev,pid,startTs){
   evModal.classList.add('open');
   setTimeout(()=>evName.focus(),50);
 }
-function repeatStartsFromModal(baseStart,dur){
-  const mode=evRepeat.value||'none';
-  const count=Math.max(1,parseInt(evRepeatCount.value)||1);
+function repeatStarts(mode, baseStart, dur, count, intervalHours){
+  mode=mode||'none';
+  count=Math.max(1,parseInt(count)||1);
   const starts=[];
   const baseDay=startOfDayMs(baseStart);
-  const baseD=new Date(baseStart);
   const add=(ts)=>starts.push(clampTs(ts,dur));
   if(mode==='none'){add(baseStart);return [...new Set(starts)]}
   if(mode==='daily'||mode==='sid'){
     for(let i=0;i<count;i++)add(baseStart+i*DAY);
   }else if(mode==='interval'){
-    const hrs=Math.max(1,parseInt(evIntervalHours.value)||6);
+    const hrs=Math.max(1,parseInt(intervalHours)||6);
     for(let i=0;i<count;i++)add(baseStart+i*hrs*60*MIN);
   }else if(mode==='bid'||mode==='tid'){
     const times=mode==='bid'?[[8,0],[18,0]]:[[8,0],[14,0],[20,0]];
@@ -479,7 +499,6 @@ function repeatStartsFromModal(baseStart,dur){
       for(const [h,m] of times){
         if(made>=count)break;
         const ts=baseDay+d*DAY+h*60*MIN+m*MIN;
-        // ในวันแรก ข้ามเวลาที่ก่อนเวลาเริ่ม เพื่อไม่สร้างงานย้อนหลังโดยไม่ตั้งใจ
         if(d===0 && ts<baseStart)continue;
         add(ts); made++;
       }
@@ -487,6 +506,10 @@ function repeatStartsFromModal(baseStart,dur){
   }
   return [...new Set(starts)].sort((a,b)=>a-b);
 }
+function repeatStartsFromModal(baseStart,dur){
+  return repeatStarts(evRepeat.value||'none', baseStart, dur, evRepeatCount.value||1, evIntervalHours.value||6);
+}
+function newRepeatGroupId(){return 'rg_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
 function saveEventModal(){
   const modal=$id('evModal');
   try{
@@ -504,8 +527,9 @@ function saveEventModal(){
       message='บันทึกการแก้ไขแล้ว';
     }else{
       const starts=repeatStartsFromModal(start,data.dur);
-      starts.forEach(st=>state.events.push({id:state.nextEid++,...data,start:st,done:false,doneBy:'',doneAt:'',doneNote:''}));
-      log('add_event',{...data,created:starts.length});
+      const repeatGroupId=starts.length>1?newRepeatGroupId():'';
+      starts.forEach(st=>state.events.push({id:state.nextEid++,...data,start:st,repeatGroupId,done:false,doneBy:'',doneAt:'',doneNote:''}));
+      log('add_event',{...data,created:starts.length,repeatGroupId});
       message=`เพิ่มงาน ${starts.length} รายการ`;
     }
     if(modal) modal.classList.remove('open');
@@ -520,7 +544,26 @@ function saveEventModal(){
     setStatus('บันทึกไม่ได้: '+(err.message||err),'var(--red)');
   }
 }
-function deleteEvent(id){if(!id)return;state.events=state.events.filter(e=>e.id!==id);if(selectedId===id)selectedId=null;log('delete_event',{id});render()}
+function deleteEvent(id, opts={}){
+  if(!id)return;
+  const ev=state.events.find(e=>Number(e.id)===Number(id));
+  if(!ev)return;
+  let ids=[Number(id)], deleteGroup=false;
+  if(ev.repeatGroupId){
+    const group=state.events.filter(e=>e.repeatGroupId===ev.repeatGroupId);
+    if(group.length>1){
+      deleteGroup=opts.group===true || (opts.askGroup!==false && confirm(`งานนี้เป็นชุดทำซ้ำ ${group.length} รายการ
+กด OK = ลบทั้งชุด
+กด Cancel = ลบเฉพาะรายการนี้`));
+      if(deleteGroup)ids=group.map(e=>Number(e.id));
+    }
+  }
+  const idSet=new Set(ids);
+  state.events=state.events.filter(e=>!idSet.has(Number(e.id)));
+  if(idSet.has(Number(selectedId)))selectedId=null;
+  log(deleteGroup?'delete_repeat_group':'delete_event',{id,ids,repeatGroupId:ev.repeatGroupId||''});
+  render();
+}
 function openPatientModal(p){editingPatientId=p?p.id:null;ptTitle.textContent=p?'แก้ไขสัตว์ป่วย':'เพิ่มสัตว์ป่วย';ptEmoji.value=p?.emoji||'🐾';ptName.value=p?.name||'';ptType.value=p?.type||'สัตว์';ptHN.value=p?.hn||'';ptCage.value=p?.cage||'';ptDx.value=p?.dx||'';ptDoctor.value=p?.doctor||'';ptDelete.style.display=p?'inline-block':'none';patientModal.classList.add('open');setTimeout(()=>ptName.focus(),50)}
 function savePatient(){const name=ptName.value.trim();if(!name)return setStatus('กรุณาใส่ชื่อสัตว์','var(--red)');const data={name,emoji:(ptEmoji.value||'🐾').trim(),type:ptType.value.trim()||'สัตว์',hn:ptHN.value.trim(),cage:ptCage.value.trim(),dx:ptDx.value.trim(),doctor:ptDoctor.value.trim()};if(editingPatientId){const p=state.patients.find(x=>x.id===editingPatientId);Object.assign(p,data);log('edit_patient',{id:editingPatientId})}else{state.patients.push({id:state.nextPid++,...data,ci:state.patients.length});log('add_patient',data)}patientModal.classList.remove('open');render()}
 function deletePatient(pid){const p=state.patients.find(x=>x.id===pid);if(!p)return;if(!confirm(`ลบ ${p.name} และงานทั้งหมดของสัตว์นี้?`))return;state.patients=state.patients.filter(x=>x.id!==pid);state.events=state.events.filter(e=>e.pid!==pid);if(selectedId&&!state.events.find(e=>e.id===selectedId))selectedId=null;log('delete_patient',{pid});render();setStatus('ลบสัตว์แล้ว','var(--red)')}
@@ -753,22 +796,38 @@ function renderQuickActions(){
   box.innerHTML=getQuickActions().map((q,i)=>`<div class="quickAction" draggable="false" data-q-i="${i}" title="ลากไปวางในตาราง">${esc(q.emoji||'⚡')} ${esc(q.name)}</div>`).join('');
 }
 let editingQuickIndex=null;
+function repeatLabel(q){
+  const mode=q.repeat||'none';
+  if(mode==='daily')return `ทุกวัน x${q.repeatCount||1}`;
+  if(mode==='sid')return `วันละครั้ง x${q.repeatCount||1}`;
+  if(mode==='interval')return `ทุก ${q.intervalHours||6} ชม. x${q.repeatCount||1}`;
+  if(mode==='bid')return `เช้า/เย็น x${q.repeatCount||1}`;
+  if(mode==='tid')return `เช้า/กลางวัน/เย็น x${q.repeatCount||1}`;
+  return 'ไม่ซ้ำ';
+}
+function updateQuickRepeatVisibility(){
+  const box=$id('quickRepeatBox'); if(!box)return;
+  const mode=$id('quickRepeat')?.value||'none';
+  box.style.display=mode==='none'?'none':'grid';
+  const intervalField=$id('quickIntervalHours')?.closest('.field');
+  if(intervalField)intervalField.style.display=mode==='interval'?'block':'none';
+}
 function openQuickModal(){editingQuickIndex=null;clearQuickForm();renderQuickList();$id('quickModal').classList.add('open');setTimeout(()=>quickName.focus(),50)}
-function clearQuickForm(){editingQuickIndex=null;quickEmoji.value='';quickName.value='';quickCat.value='routine';quickDur.value=30;quickNote.value='';quickSaveBtn.textContent='+ เพิ่ม/บันทึก'}
+function clearQuickForm(){editingQuickIndex=null;quickEmoji.value='';quickName.value='';quickCat.value='routine';quickDur.value=30;quickNote.value='';quickRepeat.value='none';quickIntervalHours.value=6;quickRepeatCount.value=1;quickSaveBtn.textContent='+ เพิ่ม/บันทึก';updateQuickRepeatVisibility()}
 function renderQuickList(){
   const list=getQuickActions();
-  quickList.innerHTML=list.length?list.map((q,i)=>`<div class="quickItem"><div><b>${esc(q.emoji||'⚡')} ${esc(q.name)}</b><small>${esc(q.cat||'routine')} · ${Number(q.dur)||30} นาที${q.note?' · '+esc(q.note):''}</small></div><button class="quickEdit" data-q-edit="${i}">แก้</button><button class="quickRemove" data-q-remove="${i}">ลบ</button></div>`).join(''):'<div class="hint">ยังไม่มี Quick action</div>';
+  quickList.innerHTML=list.length?list.map((q,i)=>`<div class="quickItem"><div><b>${esc(q.emoji||'⚡')} ${esc(q.name)}</b><small>${esc(q.cat||'routine')} · ${Number(q.dur)||30} นาที${q.note?' · '+esc(q.note):''}${q.repeat&&q.repeat!=='none'?' · ซ้ำ: '+esc(repeatLabel(q)):''}</small></div><button class="quickEdit" data-q-edit="${i}">แก้</button><button class="quickRemove" data-q-remove="${i}">ลบ</button></div>`).join(''):'<div class="hint">ยังไม่มี Quick action</div>';
 }
 function saveQuickAction(){
   const name=quickName.value.trim();
   if(!name)return setStatus('ใส่ชื่อ Quick action ก่อน','var(--red)');
-  const item={name,emoji:quickEmoji.value.trim()||'⚡',cat:quickCat.value||'routine',dur:Math.max(5,parseInt(quickDur.value)||30),note:quickNote.value.trim()};
+  const item={name,emoji:quickEmoji.value.trim()||'⚡',cat:quickCat.value||'routine',dur:Math.max(5,parseInt(quickDur.value)||30),note:quickNote.value.trim(),repeat:quickRepeat.value||'none',intervalHours:Math.max(1,parseInt(quickIntervalHours.value)||6),repeatCount:Math.max(1,parseInt(quickRepeatCount.value)||1)};
   const list=getQuickActions();
   if(editingQuickIndex!=null&&list[editingQuickIndex]){list[editingQuickIndex]=item;log('edit_quick_action',{name:item.name});}
   else{list.push(item);log('add_quick_action',{name:item.name});}
   clearQuickForm();renderQuickList();renderQuickActions();save();setStatus('บันทึก Quick action แล้ว','var(--green)');
 }
-function editQuickAction(i){const q=getQuickActions()[i];if(!q)return;editingQuickIndex=i;quickEmoji.value=q.emoji||'';quickName.value=q.name||'';quickCat.value=q.cat||'routine';quickDur.value=q.dur||30;quickNote.value=q.note||'';quickSaveBtn.textContent='บันทึกการแก้ไข'}
+function editQuickAction(i){const q=getQuickActions()[i];if(!q)return;editingQuickIndex=i;quickEmoji.value=q.emoji||'';quickName.value=q.name||'';quickCat.value=q.cat||'routine';quickDur.value=q.dur||30;quickNote.value=q.note||'';quickRepeat.value=q.repeat||'none';quickIntervalHours.value=q.intervalHours||6;quickRepeatCount.value=q.repeatCount||1;updateQuickRepeatVisibility();quickSaveBtn.textContent='บันทึกการแก้ไข'}
 function removeQuickAction(i){const list=getQuickActions();const q=list[i];if(!q)return;if(!confirm(`ลบ Quick action "${q.name}"?`))return;list.splice(i,1);log('remove_quick_action',{name:q.name});renderQuickList();renderQuickActions();save();setStatus('ลบ Quick action แล้ว','var(--red)')}
 let quickDrag=null;
 function startQuickPointerDrag(e){
@@ -884,7 +943,7 @@ function enableAlertSound(){unlockAudio();playAlertSound();setStatus('เปิ�
 $id('soundBtn')?.addEventListener('click',enableAlertSound);
 document.addEventListener('pointerdown',()=>{if(!audioReady)unlockAudio()},{once:true});
 document.addEventListener('keydown',()=>{if(!audioReady)unlockAudio()},{once:true});
-nowBtn.onclick=scrollToNow;syncBtn.onclick=openSyncModal;syncSaveBtn.onclick=saveSyncSettings;syncCancelBtn.onclick=()=>syncModal.classList.remove('open');syncClearBtn.onclick=clearSyncSettings;staffBtn.onclick=openStaffModal;staffBtn2.onclick=openStaffModal;quickManageBtn.onclick=openQuickModal;addPatientBtn.onclick=()=>openPatientModal(null);backupBtn.onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ipd-v20-backup-'+dif(Date.now())+'.json';a.click();URL.revokeObjectURL(a.href)};importBtn.onclick=()=>importFile.click();importFile.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const obj=migrate(JSON.parse(r.result));if(!obj.patients||!obj.events)throw Error('bad');state={...state,...obj};save();render();setStatus('Import สำเร็จ','var(--green)')}catch(err){setStatus('ไฟล์ไม่ถูกต้อง','var(--red)')}};r.readAsText(f)};
+nowBtn.onclick=scrollToNow;syncBtn.onclick=openSyncModal;syncSaveBtn.onclick=saveSyncSettings;syncCancelBtn.onclick=()=>syncModal.classList.remove('open');syncClearBtn.onclick=clearSyncSettings;staffBtn.onclick=openStaffModal;staffBtn2.onclick=openStaffModal;quickManageBtn.onclick=openQuickModal;addPatientBtn.onclick=()=>openPatientModal(null);backupBtn.onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ipd-v30-backup-'+dif(Date.now())+'.json';a.click();URL.revokeObjectURL(a.href)};importBtn.onclick=()=>importFile.click();importFile.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const obj=migrate(JSON.parse(r.result));if(!obj.patients||!obj.events)throw Error('bad');state={...state,...obj};save();render();setStatus('Import สำเร็จ','var(--green)')}catch(err){setStatus('ไฟล์ไม่ถูกต้อง','var(--red)')}};r.readAsText(f)};
 $id('evCancel').addEventListener('click',()=>{$id('evModal').classList.remove('open')});$id('evSave').addEventListener('click',(e)=>{e.preventDefault();saveEventModal()});$id('evDelete').addEventListener('click',()=>{if(confirm('ลบงานนี้?')){deleteEvent(editingEventId);$id('evModal').classList.remove('open')}});$id('evDone').addEventListener('click',(e)=>{e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(editingEventId));if(ev){$id('evModal').classList.remove('open');openDone(ev)}else{setStatus('ไม่พบงานที่จะบันทึกผู้ทำ','var(--red)')}});
 ptCancel.onclick=()=>patientModal.classList.remove('open');ptSave.onclick=savePatient;ptDelete.onclick=()=>{if(editingPatientId){patientModal.classList.remove('open');deletePatient(editingPatientId)}};
 if(document.getElementById('ptEmojiPresets')){ptEmojiPresets.addEventListener('click',e=>{const b=e.target.closest('.emojiPreset');if(!b)return;ptEmoji.value=b.textContent.trim();ptName.focus();});}
@@ -893,6 +952,7 @@ quickCloseBtn.onclick=()=>quickModal.classList.remove('open');quickSaveBtn.oncli
 staffCloseBtn.onclick=()=>staffModal.classList.remove('open');staffAddBtn.onclick=addStaffName;staffNameInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addStaffName()}});staffList.onclick=e=>{const b=e.target.closest('[data-staff-i]');if(b)removeStaffAt(+b.dataset.staffI)};
 [evModal,patientModal,doneModal,quickModal,staffModal,syncModal].forEach(m=>m.addEventListener('mousedown',e=>{if(e.target===m)m.classList.remove('open')}));
 $id('evRepeat').addEventListener('change',()=>{$id('evIntervalHours').closest('.field').style.display=$id('evRepeat').value==='interval'?'block':'none'});$id('evRepeat').dispatchEvent(new Event('change'));
+$id('quickRepeat')?.addEventListener('change',updateQuickRepeatVisibility);updateQuickRepeatVisibility();
 window.addEventListener('online',()=>{setStatus('อินเทอร์เน็ตกลับมาแล้ว · กำลัง reconnect','var(--green)');scheduleReconnect()});
 window.addEventListener('offline',()=>{cloudSync.connected=false;syncLabel();setStatus('อินเทอร์เน็ตหลุด · ใช้ local ต่อชั่วคราว','var(--amber)')});
 load();seed();refreshTimelineRange();render();initCloudSync(true);updateAlertStatus();setTimeout(scrollToNow,80);setTimeout(checkDueAlerts,1500);
@@ -904,9 +964,13 @@ setInterval(()=>{
     render();
     setTimeout(scrollToNow,50);
   }else{
-    updateNow();renderSummary();renderPanel();checkDueAlerts();
+    updateNow();
+    // อัปเดต urgent/status บ่อยขึ้น แต่ไม่ rebuild ตาราง เพื่อให้เส้นเวลาขยับตามเวลาจริงและไม่กระตุก
+    renderSummary();
+    renderPanel();
+    checkDueAlerts();
   }
-},30000);
+},5000);
 </script>
 </body>
 </html>

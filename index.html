@@ -28,14 +28,14 @@ button,input,textarea,select{font:inherit}
 .hourCell{height:var(--hour);border-bottom:1px solid var(--line);cursor:pointer}.hourCell:nth-child(odd){background:#fcfefd}.hourCell:hover{background:#f2fbf7}
 .ev{position:absolute;left:6px;right:6px;min-height:32px;border-radius:12px;padding:6px 8px;border-left:5px solid;box-shadow:0 5px 14px rgba(23,54,42,.08);font-size:11px;overflow:hidden;cursor:grab;user-select:none;z-index:5;background:#eef7ff}.ev:active{cursor:grabbing}.ev.selected{outline:2px solid #111827;outline-offset:2px;z-index:11}.ev.focusFlash{animation:focusFlash 1.2s ease-in-out 3;z-index:20}@keyframes focusFlash{0%,100%{outline:2px solid transparent;transform:scale(1)}50%{outline:4px solid #111827;outline-offset:3px;transform:scale(1.02)}}.ev.done{opacity:.55}.ev.overdue{background:#fff1f1!important;border-left-color:var(--red)!important;color:#9f1239!important}.ev.soon{background:#fff8e6!important;border-left-color:var(--amber)!important;color:#92400e!important}.evName{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.evTime{opacity:.75;margin-top:1px}.evNote{opacity:.65;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.doneRow{color:var(--green);font-size:10px;margin-top:2px}.evDoneMini,.evEditMini{position:absolute;top:5px;width:22px;height:22px;border:0;border-radius:50%;color:white;font-weight:900;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.12);z-index:12}.evDoneMini{right:6px;background:var(--green)}.evEditMini{right:32px;background:#2563eb}.evDoneMini:hover,.evEditMini:hover{filter:brightness(.95);transform:scale(1.04)}
 .resizeH{position:absolute;left:0;right:0;bottom:0;height:8px;cursor:ns-resize}.resizeH:hover{background:rgba(0,0,0,.08)}
-#nowLine{position:absolute;left:0;right:0;height:2px;background:var(--red);z-index:30;pointer-events:none;box-shadow:0 0 8px rgba(239,68,68,.45)}#nowLine:before{content:"";position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--red)}.addLane{width:72px;flex-shrink:0;background:#fbfffd;border-right:1px solid var(--line)}.addHead{height:var(--head);position:sticky;top:0;z-index:20;display:grid;place-items:center;border-bottom:1px solid var(--line);cursor:pointer;color:var(--mint);font-weight:800}.addHead:hover{background:var(--mint2)}
+#nowLine{position:absolute;left:0;right:0;height:2px;background:var(--red);z-index:30;pointer-events:none;box-shadow:0 0 8px rgba(239,68,68,.45)}#nowLine:before{content:"";position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--red)}#nowClock{position:absolute;left:8px;top:-13px;background:var(--red);color:#fff;border-radius:999px;padding:2px 7px;font-size:11px;font-weight:900;line-height:1;box-shadow:0 4px 12px rgba(239,68,68,.25);white-space:nowrap}.addLane{width:72px;flex-shrink:0;background:#fbfffd;border-right:1px solid var(--line)}.addHead{height:var(--head);position:sticky;top:0;z-index:20;display:grid;place-items:center;border-bottom:1px solid var(--line);cursor:pointer;color:var(--mint);font-weight:800}.addHead:hover{background:var(--mint2)}
 .panelTitle{font-size:15px;font-weight:900;margin-bottom:10px}.taskList{display:flex;flex-direction:column;gap:8px}.taskItem{border:1px solid var(--line);border-radius:14px;padding:9px;background:#fbfffd}.taskItem.clickable{cursor:pointer}.taskItem.clickable:hover{background:#f0fff8;border-color:var(--mint)}.taskItem b{font-size:12px}.taskItem div{font-size:11px;color:var(--muted);margin-top:2px}.hint{font-size:11px;color:var(--muted);line-height:1.5;margin-top:14px}.sep{height:1px;background:var(--line);margin:14px 0}
 #tt{position:fixed;z-index:9999;pointer-events:none;opacity:0;transition:.12s;max-width:280px;background:#10251f;color:white;border-radius:16px;padding:12px 14px;box-shadow:0 16px 36px rgba(0,0,0,.25);font-size:12px}#tt.on{opacity:1}.ttName{font-weight:900;font-size:14px;margin-bottom:5px}.ttMuted{color:#b7cbc3}.ttDone{color:#86efac;margin-top:6px}
 .modalBg{position:fixed;inset:0;background:rgba(15,35,29,.35);display:none;align-items:center;justify-content:center;z-index:1000}.modalBg.open{display:flex}.modal{background:white;border-radius:20px;border:1px solid var(--line);box-shadow:0 25px 70px rgba(0,0,0,.22);padding:20px;width:360px;max-height:90vh;overflow:auto}.modal h3{font-size:18px;margin-bottom:14px}.field{margin-bottom:10px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:700}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line2);border-radius:12px;padding:9px 11px;outline:none}.field textarea{min-height:62px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.modalBtns{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}.chipRow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.chip{font-size:11px;padding:5px 8px;border:1px solid var(--line2);border-radius:999px;background:var(--panel2);cursor:pointer}.staffItem{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:7px;background:#fbfffd}.staffName{font-weight:700}.staffRemove{border:1px solid #ffd1d1;background:#fff2f2;color:var(--red);border-radius:9px;padding:4px 8px;cursor:pointer}.emojiSelect{font-size:24px;line-height:1;height:48px;padding:6px 10px;text-align:center}.emojiHelp{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.35}.emojiPresetRow{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.emojiPreset{border:1px solid var(--line2);background:#f8fffc;border-radius:10px;font-size:20px;padding:5px 7px;cursor:pointer}.emojiPreset:hover{background:var(--mintSoft);border-color:var(--mint)}
 .summaryText{width:100%;min-height:260px;border:1px solid var(--line2);border-radius:14px;padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.55;white-space:pre-wrap;background:#fbfffd;color:var(--text)}
 .summaryMeta{font-size:12px;color:var(--muted);margin:-4px 0 10px;line-height:1.45}
 
-.quickPanel{margin-top:12px}.quickGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.quickAction{border:1px solid var(--line2);background:#fbfffd;border-radius:14px;padding:9px 8px;cursor:grab;user-select:none;font-size:12px;font-weight:800;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(34,77,60,.05);touch-action:none}.quickAction:hover{background:var(--mint2);border-color:var(--mint)}.quickAction:active{cursor:grabbing}.quickHint{font-size:11px;color:var(--muted);line-height:1.45;margin-top:8px}.quickManageRow{display:flex;gap:8px;margin-top:8px}.quickManageRow .btn{flex:1}.quickGhost{position:fixed;z-index:3000;pointer-events:none;border:1px solid var(--mint);background:white;border-radius:14px;padding:10px 12px;font-size:13px;font-weight:900;box-shadow:0 18px 45px rgba(22,80,60,.22);transform:translate(-50%,-50%)}.quickItem{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:7px;background:#fbfffd}.quickItem b{font-size:13px}.quickItem small{display:block;color:var(--muted);font-size:11px}.quickEdit,.quickRemove{border:1px solid var(--line2);background:var(--panel2);border-radius:9px;padding:4px 8px;cursor:pointer}.quickRemove{background:#fff2f2;color:var(--red);border-color:#ffd1d1}.soundRow{display:flex;gap:8px;margin-top:8px}.dropHot{outline:3px dashed rgba(35,180,134,.55);outline-offset:-6px;background:#f0fbf6!important}.alertBadge{display:inline-flex;align-items:center;gap:5px;font-size:11px;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;border-radius:999px;padding:4px 8px;margin-top:8px}
+.quickPanel{margin-top:12px}.quickGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.quickAction{border:1px solid var(--line2);background:#fbfffd;border-radius:14px;padding:9px 8px;cursor:grab;user-select:none;font-size:12px;font-weight:800;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(34,77,60,.05);touch-action:none}.quickAction:hover{background:var(--mint2);border-color:var(--mint)}.quickAction:active{cursor:grabbing}.quickHint{font-size:11px;color:var(--muted);line-height:1.45;margin-top:8px}.quickManageRow{display:flex;gap:8px;margin-top:8px}.quickManageRow .btn{flex:1}.quickGhost{position:fixed;z-index:3000;pointer-events:none;border:1px solid var(--mint);background:white;border-radius:14px;padding:10px 12px;font-size:13px;font-weight:900;box-shadow:0 18px 45px rgba(22,80,60,.22);transform:translate(-50%,-50%)}.quickItem{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:7px;background:#fbfffd}.quickItem b{font-size:13px}.quickItem small{display:block;color:var(--muted);font-size:11px}.quickEdit,.quickRemove{border:1px solid var(--line2);background:var(--panel2);border-radius:9px;padding:4px 8px;cursor:pointer}.quickRemove{background:#fff2f2;color:var(--red);border-color:#ffd1d1}.soundRow{display:flex;gap:8px;margin-top:8px}.dropHot{outline:3px dashed rgba(35,180,134,.55);outline-offset:-6px;background:#f0fbf6!important}.alertBadge{display:inline-flex;align-items:center;gap:5px;font-size:11px;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;border-radius:999px;padding:4px 8px;margin-top:8px}.dropPreview{border:1px solid var(--line);border-radius:14px;background:#fbfffd;padding:10px 12px;margin-bottom:10px}.dropPreview b{font-size:14px}.dropPreview small{display:block;color:var(--muted);margin-top:3px}
 #printArea{display:none}
 @media print{
   body{height:auto;overflow:visible;background:white}body *{visibility:hidden}#printArea,#printArea *{visibility:visible}#printArea{display:block!important;position:absolute;left:0;top:0;width:100%;padding:18mm;color:#111;font-family:Arial,sans-serif}.printHeader{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:8px;margin-bottom:12px}.printBrand{display:flex;align-items:center;gap:10px}.printLogo{height:48px;width:auto;max-width:160px}.printTitle{font-size:22px;font-weight:bold}.printMeta{font-size:12px;text-align:right}.printInfo{font-size:13px;margin-bottom:12px}.printTable{width:100%;border-collapse:collapse;font-size:13px}.printTable th,.printTable td{border:1px solid #333;padding:7px;text-align:left;vertical-align:top}.printTable th{background:#eee}.signRow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:28px}.signBox{border-top:1px solid #111;text-align:center;padding-top:6px;font-size:12px}
@@ -58,7 +58,7 @@ button,input,textarea,select{font:inherit}
 <div class="boardShell">
 <div id="left-date"><div class="spacer"></div><div id="date-inner"></div></div>
 <div id="left-time"><div class="spacer"></div><div id="time-inner"></div></div>
-<div id="main-scroll"><div id="lanes"><div id="nowLine"></div></div></div>
+<div id="main-scroll"><div id="lanes"><div id="nowLine"><span id="nowClock"></span></div></div></div>
 </div>
 <aside class="rightPanel">
 <div class="panelTitle">งานวันนี้ / ใกล้ถึงเวลา</div><div class="taskList" id="taskList"></div>
@@ -67,7 +67,7 @@ button,input,textarea,select{font:inherit}
   <div class="panelTitle" style="margin-top:12px;margin-bottom:8px">Quick action</div>
   <div class="quickGrid" id="quickActions"></div>
   <div class="quickManageRow"><button class="btn" id="quickManageBtn">จัดการ Quick action</button></div>
-  <div class="quickHint">ลากรายการไปวางในช่องเวลาของสัตว์ป่วย ระบบจะสร้างงานให้ทันที</div>
+  <div class="quickHint">ลากรายการไปวางในช่องเวลา แล้วเลือกได้ว่าจะสร้างครั้งเดียวหรือทำซ้ำ</div>
 </div>
 <div class="sep"></div>
 <button class="btn" id="soundBtn" style="width:100%">🔔 เปิด/ทดสอบเสียงเตือน</button>
@@ -112,6 +112,15 @@ button,input,textarea,select{font:inherit}
   <div class="modalBtns"><button class="btn" id="urgentCloseBtn">ปิด</button></div>
 </div></div>
 
+
+<div class="modalBg" id="repeatDeleteModal"><div class="modal"><h3>ลบงานที่ทำซ้ำ</h3>
+  <div class="hint" id="repeatDeleteInfo" style="margin-bottom:12px">งานนี้เป็นส่วนหนึ่งของชุดทำซ้ำ ต้องการลบแบบไหน?</div>
+  <div class="modalBtns">
+    <button class="btn" id="repeatDeleteCancel">ยกเลิก</button>
+    <button class="btn danger" id="repeatDeleteOne">ลบเฉพาะรายการนี้</button>
+    <button class="btn danger" id="repeatDeleteAll">ลบทั้งชุด</button>
+  </div>
+</div></div>
 <div class="modalBg" id="syncModal"><div class="modal"><h3>☁️ ตั้งค่า Sync ทุกเครื่อง</h3>
 <div class="syncWarn">ใช้ Firebase Realtime Database ฟรีได้ในคลินิกเล็ก ๆ ใส่ config จาก Firebase แล้วทุกเครื่องที่เปิดลิงก์เดียวกันจะเห็นข้อมูลชุดเดียวกัน</div>
 <div class="field"><label>สถานะ</label><div id="syncStateText"><span class="syncDot"></span>Local only</div></div>
@@ -149,6 +158,16 @@ button,input,textarea,select{font:inherit}
 <div id="quickList"></div>
 <div class="hint">รายการนี้ใช้สำหรับลากไปวางในตาราง และจะบันทึกไว้ในเครื่อง/Sync ถ้าเปิด cloud</div>
 <div class="modalBtns"><button class="btn" id="quickCloseBtn">ปิด</button></div>
+</div></div>
+
+<div class="modalBg" id="quickDropModal"><div class="modal"><h3>เพิ่ม Quick action ลงตาราง</h3>
+  <div class="dropPreview" id="quickDropPreview"><b>Quick action</b><small>เลือกว่าจะสร้างครั้งเดียวหรือทำซ้ำ</small></div>
+  <div class="row"><div class="field"><label>วันที่</label><input id="quickDropDate" type="date"/></div><div class="field"><label>เวลา</label><input id="quickDropTime" type="time"/></div></div>
+  <div class="row"><div class="field"><label>ระยะเวลา (นาที)</label><input id="quickDropDur" type="number" min="5" step="5"/></div><div class="field"><label>ทำซ้ำ</label><select id="quickDropRepeat"><option value="none">ไม่ซ้ำ / สร้างครั้งเดียว</option><option value="daily">ทุกวัน</option><option value="interval">ทุก X ชั่วโมง</option><option value="bid">เช้า / เย็น</option><option value="tid">เช้า / กลางวัน / เย็น</option><option value="sid">วันละครั้ง ตามเวลาที่วาง</option></select></div></div>
+  <div class="row" id="quickDropRepeatBox"><div class="field"><label>ทุกกี่ชั่วโมง</label><input id="quickDropIntervalHours" type="number" min="1" step="1" value="6"/></div><div class="field"><label>จำนวนครั้ง</label><input id="quickDropRepeatCount" type="number" min="1" step="1" value="1"/></div></div>
+  <div class="field"><label>รายละเอียด</label><textarea id="quickDropNote"></textarea></div>
+  <div class="hint">ค่าเริ่มต้นจะดึงจาก Quick action แต่สามารถเปลี่ยนก่อนสร้างงานได้ทุกครั้ง</div>
+  <div class="modalBtns"><button class="btn" id="quickDropCancel">ยกเลิก</button><button class="btn primary" id="quickDropCreate">สร้างงาน</button></div>
 </div></div>
 <div class="modalBg" id="staffModal"><div class="modal"><h3>จัดการผู้ทำ</h3>
 <div class="field"><label>เพิ่มชื่อผู้ทำ</label><input id="staffNameInput" placeholder="เช่น หมอเอ / ผู้ช่วยบี"/></div>
@@ -400,16 +419,16 @@ function checkDueAlerts(){
   setStatus('🔔 '+msg,'var(--red)');
   updateAlertStatus('แจ้งเตือนล่าสุด: '+msg);
 }
-function createQuickEvent(q,pid,start){
+function createQuickEvent(q,pid,start,opts={}){
   if(!pid||!q||!q.name)return;
-  const dur=Math.max(5,Number(q.dur)||30);
+  const dur=Math.max(5,Number(opts.dur ?? q.dur)||30);
   const base=clampTs(roundTs(start,15),dur);
-  const mode=q.repeat||'none';
-  const starts=repeatStarts(mode,base,dur,q.repeatCount||1,q.intervalHours||6);
+  const mode=opts.repeat ?? q.repeat ?? 'none';
+  const starts=repeatStarts(mode,base,dur,opts.repeatCount ?? q.repeatCount ?? 1,opts.intervalHours ?? q.intervalHours ?? 6);
   const repeatGroupId=starts.length>1?newRepeatGroupId():'';
   let first=null;
   starts.forEach(st=>{
-    const ev={id:state.nextEid++,pid:+pid,name:q.name,start:st,dur,cat:q.cat||'routine',note:q.note||'',repeatGroupId,done:false,doneBy:'',doneAt:'',doneNote:''};
+    const ev={id:state.nextEid++,pid:+pid,name:q.name,start:st,dur,cat:q.cat||'routine',note:(opts.note ?? q.note ?? ''),repeatGroupId,done:false,doneBy:'',doneAt:'',doneNote:''};
     state.events.push(ev); if(!first)first=ev;
   });
   if(first)selectedId=first.id;
@@ -425,7 +444,7 @@ function renderSummary(){const n=Date.now(), tod=startOfDayMs(n), todEnd=tod+DAY
 function matchingFocusEvents(type){const n=Date.now(), tod=startOfDayMs(n), todEnd=tod+DAY;let list=[];if(type==='overdue')list=state.events.filter(e=>!e.done&&e.start+e.dur*MIN<n&&inRange(e));else if(type==='soon')list=state.events.filter(e=>!e.done&&e.start>=n&&e.start<=n+60*MIN&&inRange(e));else if(type==='today')list=state.events.filter(e=>e.start>=tod&&e.start<todEnd&&inRange(e));return list.sort((a,b)=>a.start-b.start)}
 function focusEvents(type){const list=matchingFocusEvents(type);document.querySelectorAll('.ev.focusFlash').forEach(el=>el.classList.remove('focusFlash'));if(!list.length){const label=type==='overdue'?'งานเกินเวลา':type==='soon'?'งานใน 1 ชั่วโมง':'งานวันนี้';setStatus(`ไม่พบ${label}ในช่วง timeline ที่แสดง`,'var(--amber)');return}selectedId=list[0].id;const first=list[0];mainScroll.scrollTo({top:Math.max(0,yFromTs(first.start)-160),behavior:'smooth'});setTimeout(()=>{document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'));list.forEach(e=>{const el=document.querySelector(`.ev[data-eid="${e.id}"]`);if(el){el.classList.add('focusFlash');if(e.id===first.id)el.classList.add('selected')}});const label=type==='overdue'?'งานเกินเวลา':type==='soon'?'งานใน 1 ชั่วโมง':'งานวันนี้';setStatus(`พบ${label} ${list.length} รายการ`,'var(--green)')},260)}
 function buildFixed(){dateInner=document.getElementById('date-inner');timeInner=document.getElementById('time-inner');dateInner.innerHTML='';timeInner.innerHTML='';const todayStr=dif(Date.now());for(let day=0;day<TOTAL_DAYS;day++){const d=new Date(rangeStartMs+day*DAY);const db=document.createElement('div');db.className='dateBlock'+(dif(d)===todayStr?' today':'');db.innerHTML=`<div class="dateText">${thaiDateB(d)}</div>`;dateInner.appendChild(db)}for(let i=0;i<TOTAL_H;i++){const t=document.createElement('div');t.className='timeLabel';t.textContent=`${pad(i%24)}:00`;timeInner.appendChild(t)}}
-function buildLanes(){const lanes=document.getElementById('lanes');lanes.innerHTML='<div id="nowLine"></div>';state.patients.forEach(p=>{const lane=document.createElement('div');lane.className='lane';lane.dataset.pid=p.id;const c=COLORS[p.ci%COLORS.length];lane.innerHTML=`<div class="laneHeader"><div class="avatar" style="background:${c}">${esc(p.emoji||typeEmoji(p.type))}</div><div class="pInfo"><div class="pName">${esc(p.name)}</div><div class="pMeta">${esc(p.type||'สัตว์')} · ${esc(p.hn||'-')} · กรง ${esc(p.cage||'-')}</div></div><div class="hActions"><button class="mini" data-act="summary" data-pid="${p.id}" title="สรุปวันนี้เพื่อคัดลอก">สรุป</button><button class="mini" data-act="print" data-pid="${p.id}" title="พิมพ์วันนี้">🖨</button><button class="mini" data-act="addEv" data-pid="${p.id}" title="เพิ่มงาน">+</button><button class="mini" data-act="editPt" data-pid="${p.id}">แก้</button><button class="mini danger" data-act="delPt" data-pid="${p.id}">ลบ</button></div></div>`;for(let i=0;i<TOTAL_H;i++){const cell=document.createElement('div');cell.className='hourCell';cell.dataset.pid=p.id;cell.dataset.hour=i;lane.appendChild(cell)}state.events.filter(e=>e.pid===p.id&&inRange(e)).sort((a,b)=>a.start-b.start).forEach(e=>lane.appendChild(makeEvent(e,p,c)));lanes.appendChild(lane)});const add=document.createElement('div');add.className='addLane';add.innerHTML='<div class="addHead" id="addLaneBtn">+<br><small>สัตว์</small></div>';for(let i=0;i<TOTAL_H;i++){const c=document.createElement('div');c.className='hourCell';add.appendChild(c)}lanes.appendChild(add);if(selectedId){const el=document.querySelector(`.ev[data-eid="${selectedId}"]`);if(el)el.classList.add('selected')}}
+function buildLanes(){const lanes=document.getElementById('lanes');lanes.innerHTML='<div id="nowLine"><span id="nowClock"></span></div>';state.patients.forEach(p=>{const lane=document.createElement('div');lane.className='lane';lane.dataset.pid=p.id;const c=COLORS[p.ci%COLORS.length];lane.innerHTML=`<div class="laneHeader"><div class="avatar" style="background:${c}">${esc(p.emoji||typeEmoji(p.type))}</div><div class="pInfo"><div class="pName">${esc(p.name)}</div><div class="pMeta">${esc(p.type||'สัตว์')} · ${esc(p.hn||'-')} · กรง ${esc(p.cage||'-')}</div></div><div class="hActions"><button class="mini" data-act="summary" data-pid="${p.id}" title="สรุปวันนี้เพื่อคัดลอก">สรุป</button><button class="mini" data-act="print" data-pid="${p.id}" title="พิมพ์วันนี้">🖨</button><button class="mini" data-act="addEv" data-pid="${p.id}" title="เพิ่มงาน">+</button><button class="mini" data-act="editPt" data-pid="${p.id}">แก้</button><button class="mini danger" data-act="delPt" data-pid="${p.id}">ลบ</button></div></div>`;for(let i=0;i<TOTAL_H;i++){const cell=document.createElement('div');cell.className='hourCell';cell.dataset.pid=p.id;cell.dataset.hour=i;lane.appendChild(cell)}state.events.filter(e=>e.pid===p.id&&inRange(e)).sort((a,b)=>a.start-b.start).forEach(e=>lane.appendChild(makeEvent(e,p,c)));lanes.appendChild(lane)});const add=document.createElement('div');add.className='addLane';add.innerHTML='<div class="addHead" id="addLaneBtn">+<br><small>สัตว์</small></div>';for(let i=0;i<TOTAL_H;i++){const c=document.createElement('div');c.className='hourCell';add.appendChild(c)}lanes.appendChild(add);if(selectedId){const el=document.querySelector(`.ev[data-eid="${selectedId}"]`);if(el)el.classList.add('selected')}}
 function makeEvent(ev,p,c){const el=document.createElement('div');const st=eventStatus(ev);el.className='ev '+st+(selectedId===ev.id?' selected':'');el.dataset.eid=ev.id;el.style.top=yFromTs(ev.start)+'px';el.style.height=Math.max(32,ev.dur*MPX)+'px';el.style.borderLeftColor=c;el.style.background=ev.cat==='medicine'?'#eef7ff':ev.cat==='procedure'?'#f6f0ff':'#effaf5';el.style.color='#1f342d';
   const quickEdit=`<button class="evEditMini" data-edit-eid="${ev.id}" title="แก้ไขงาน">✎</button>`;
   const quickDone=!ev.done?`<button class="evDoneMini" data-done-eid="${ev.id}" title="บันทึกผู้ทำ">✓</button>`:'';
@@ -455,6 +474,8 @@ function updateNow(){
   if(now<rangeStartMs||now>rangeEndMs){nl.style.display='none';return}
   nl.style.display='block';
   nl.style.top=yFromTs(now)+'px';
+  const lab=document.getElementById('nowClock');
+  if(lab)lab.textContent=timeText(now);
 }
 function scrollToNow(){const ms=document.getElementById('main-scroll');ms.scrollTop=Math.max(0,yFromTs(Date.now())-ms.clientHeight/2)}
 function syncFixedScroll(){document.getElementById('left-date').scrollTop=mainScroll.scrollTop;document.getElementById('left-time').scrollTop=mainScroll.scrollTop}
@@ -552,9 +573,11 @@ function deleteEvent(id, opts={}){
   if(ev.repeatGroupId){
     const group=state.events.filter(e=>e.repeatGroupId===ev.repeatGroupId);
     if(group.length>1){
-      deleteGroup=opts.group===true || (opts.askGroup!==false && confirm(`งานนี้เป็นชุดทำซ้ำ ${group.length} รายการ
-กด OK = ลบทั้งชุด
-กด Cancel = ลบเฉพาะรายการนี้`));
+      if(opts.group==null && opts.askGroup!==false){
+        openRepeatDeleteModal(id, group.length);
+        return;
+      }
+      deleteGroup=opts.group===true;
       if(deleteGroup)ids=group.map(e=>Number(e.id));
     }
   }
@@ -564,6 +587,14 @@ function deleteEvent(id, opts={}){
   log(deleteGroup?'delete_repeat_group':'delete_event',{id,ids,repeatGroupId:ev.repeatGroupId||''});
   render();
 }
+let repeatDeleteTargetId=null;
+function openRepeatDeleteModal(id,count){
+  repeatDeleteTargetId=Number(id);
+  const info=$id('repeatDeleteInfo');
+  if(info)info.textContent=`งานนี้เป็นชุดทำซ้ำ ${count||''} รายการ ต้องการลบเฉพาะรายการนี้ หรือลบทั้งชุด?`;
+  $id('repeatDeleteModal')?.classList.add('open');
+}
+function closeRepeatDeleteModal(){repeatDeleteTargetId=null;$id('repeatDeleteModal')?.classList.remove('open')}
 function openPatientModal(p){editingPatientId=p?p.id:null;ptTitle.textContent=p?'แก้ไขสัตว์ป่วย':'เพิ่มสัตว์ป่วย';ptEmoji.value=p?.emoji||'🐾';ptName.value=p?.name||'';ptType.value=p?.type||'สัตว์';ptHN.value=p?.hn||'';ptCage.value=p?.cage||'';ptDx.value=p?.dx||'';ptDoctor.value=p?.doctor||'';ptDelete.style.display=p?'inline-block':'none';patientModal.classList.add('open');setTimeout(()=>ptName.focus(),50)}
 function savePatient(){const name=ptName.value.trim();if(!name)return setStatus('กรุณาใส่ชื่อสัตว์','var(--red)');const data={name,emoji:(ptEmoji.value||'🐾').trim(),type:ptType.value.trim()||'สัตว์',hn:ptHN.value.trim(),cage:ptCage.value.trim(),dx:ptDx.value.trim(),doctor:ptDoctor.value.trim()};if(editingPatientId){const p=state.patients.find(x=>x.id===editingPatientId);Object.assign(p,data);log('edit_patient',{id:editingPatientId})}else{state.patients.push({id:state.nextPid++,...data,ci:state.patients.length});log('add_patient',data)}patientModal.classList.remove('open');render()}
 function deletePatient(pid){const p=state.patients.find(x=>x.id===pid);if(!p)return;if(!confirm(`ลบ ${p.name} และงานทั้งหมดของสัตว์นี้?`))return;state.patients=state.patients.filter(x=>x.id!==pid);state.events=state.events.filter(e=>e.pid!==pid);if(selectedId&&!state.events.find(e=>e.id===selectedId))selectedId=null;log('delete_patient',{pid});render();setStatus('ลบสัตว์แล้ว','var(--red)')}
@@ -829,6 +860,48 @@ function saveQuickAction(){
 }
 function editQuickAction(i){const q=getQuickActions()[i];if(!q)return;editingQuickIndex=i;quickEmoji.value=q.emoji||'';quickName.value=q.name||'';quickCat.value=q.cat||'routine';quickDur.value=q.dur||30;quickNote.value=q.note||'';quickRepeat.value=q.repeat||'none';quickIntervalHours.value=q.intervalHours||6;quickRepeatCount.value=q.repeatCount||1;updateQuickRepeatVisibility();quickSaveBtn.textContent='บันทึกการแก้ไข'}
 function removeQuickAction(i){const list=getQuickActions();const q=list[i];if(!q)return;if(!confirm(`ลบ Quick action "${q.name}"?`))return;list.splice(i,1);log('remove_quick_action',{name:q.name});renderQuickList();renderQuickActions();save();setStatus('ลบ Quick action แล้ว','var(--red)')}
+let quickDropDraft=null;
+function updateQuickDropRepeatVisibility(){
+  const mode=$id('quickDropRepeat')?.value||'none';
+  const box=$id('quickDropRepeatBox'); if(!box)return;
+  box.style.display=mode==='none'?'none':'grid';
+  const intervalField=$id('quickDropIntervalHours')?.closest('.field');
+  const countField=$id('quickDropRepeatCount')?.closest('.field');
+  if(intervalField)intervalField.style.display=mode==='interval'?'block':'none';
+  if(countField)countField.style.display=mode==='none'?'none':'block';
+}
+function openQuickDropModal(q,pid,ts){
+  if(!q||!pid)return;
+  const dur=Math.max(5,Number(q.dur)||30);
+  const start=clampTs(roundTs(ts,15),dur);
+  quickDropDraft={q:{...q},pid:+pid,start};
+  const p=state.patients.find(x=>x.id===+pid)||{};
+  $id('quickDropPreview').innerHTML=`<b>${esc(q.emoji||'⚡')} ${esc(q.name)}</b><small>${esc(p.name||'-')} · วางที่ ${ds(start)} ${timeText(start)} · เลือกซ้ำหรือไม่ซ้ำได้</small>`;
+  $id('quickDropDate').value=dif(start);
+  $id('quickDropTime').value=timeText(start);
+  $id('quickDropDur').value=dur;
+  $id('quickDropRepeat').value=q.repeat||'none';
+  $id('quickDropIntervalHours').value=q.intervalHours||6;
+  $id('quickDropRepeatCount').value=q.repeatCount||1;
+  $id('quickDropNote').value=q.note||'';
+  updateQuickDropRepeatVisibility();
+  $id('quickDropModal').classList.add('open');
+}
+function createQuickDropFromModal(){
+  if(!quickDropDraft)return;
+  const q={...quickDropDraft.q};
+  const start=localDateTime($id('quickDropDate').value||dif(quickDropDraft.start), $id('quickDropTime').value||timeText(quickDropDraft.start));
+  const opts={
+    dur:Math.max(5,parseInt($id('quickDropDur').value)||q.dur||30),
+    repeat:$id('quickDropRepeat').value||'none',
+    intervalHours:Math.max(1,parseInt($id('quickDropIntervalHours').value)||6),
+    repeatCount:Math.max(1,parseInt($id('quickDropRepeatCount').value)||1),
+    note:$id('quickDropNote').value.trim()
+  };
+  createQuickEvent(q,quickDropDraft.pid,start,opts);
+  quickDropDraft=null;
+  $id('quickDropModal').classList.remove('open');
+}
 let quickDrag=null;
 function startQuickPointerDrag(e){
   const qa=e.target.closest('.quickAction'); if(!qa)return;
@@ -845,7 +918,7 @@ function endQuickPointerDrag(e){
   const lane=document.elementFromPoint(e.clientX,e.clientY)?.closest('.lane[data-pid]');
   if(!lane)return;
   const rect=lane.getBoundingClientRect(); const y=e.clientY-rect.top; const ts=tsFromY(y);
-  createQuickEvent(q,+lane.dataset.pid,ts);
+  openQuickDropModal(q,+lane.dataset.pid,ts);
 }
 
 function openStaffModal(){
@@ -894,7 +967,7 @@ $id('urgentCloseBtn').onclick=closeUrgentAction;
 $id('urgentJumpBtn').onclick=()=>{const ev=urgentCurrentEvent();if(ev){closeUrgentAction();jumpToEvent(ev.id)}};
 $id('urgentEditBtn').onclick=()=>{const ev=urgentCurrentEvent();if(ev){closeUrgentAction();openEventModal(ev,ev.pid)}};
 $id('urgentDoneBtn').onclick=()=>{const ev=urgentCurrentEvent();if(ev){closeUrgentAction();openDone(ev)}};
-$id('urgentDeleteBtn').onclick=()=>{const ev=urgentCurrentEvent();if(ev&&confirm('ลบงานนี้?')){deleteEvent(ev.id);closeUrgentAction();setStatus('ลบงานแล้ว','var(--red)')}};
+$id('urgentDeleteBtn').onclick=()=>{const ev=urgentCurrentEvent();if(ev){deleteEvent(ev.id);closeUrgentAction();setStatus('ลบงานแล้ว','var(--red)')}};
 summary.addEventListener('click',e=>{const urgent=e.target.closest('[data-urgent-eid]');if(urgent){openUrgentAction(urgent.dataset.urgentEid);return}const card=e.target.closest('[data-focus]');if(card)focusEvents(card.dataset.focus)});
 $id('taskList').addEventListener('click',e=>{const item=e.target.closest('[data-jump-eid]');if(item)jumpToEvent(item.dataset.jumpEid)});
 mainScroll.addEventListener('mousedown',e=>{
@@ -937,22 +1010,29 @@ mainScroll.addEventListener('drop',e=>{
   let q=null;try{q=JSON.parse(e.dataTransfer.getData('application/json')||'null')}catch(err){}
   if(!q||!q.name)return;
   const rect=lane.getBoundingClientRect();const y=e.clientY-rect.top;const ts=tsFromY(y);
-  createQuickEvent(q,+lane.dataset.pid,ts);
+  openQuickDropModal(q,+lane.dataset.pid,ts);
 });
 function enableAlertSound(){unlockAudio();playAlertSound();setStatus('เปิดเสียงเตือนแล้ว','var(--green)')}
 $id('soundBtn')?.addEventListener('click',enableAlertSound);
 document.addEventListener('pointerdown',()=>{if(!audioReady)unlockAudio()},{once:true});
 document.addEventListener('keydown',()=>{if(!audioReady)unlockAudio()},{once:true});
 nowBtn.onclick=scrollToNow;syncBtn.onclick=openSyncModal;syncSaveBtn.onclick=saveSyncSettings;syncCancelBtn.onclick=()=>syncModal.classList.remove('open');syncClearBtn.onclick=clearSyncSettings;staffBtn.onclick=openStaffModal;staffBtn2.onclick=openStaffModal;quickManageBtn.onclick=openQuickModal;addPatientBtn.onclick=()=>openPatientModal(null);backupBtn.onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ipd-v30-backup-'+dif(Date.now())+'.json';a.click();URL.revokeObjectURL(a.href)};importBtn.onclick=()=>importFile.click();importFile.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const obj=migrate(JSON.parse(r.result));if(!obj.patients||!obj.events)throw Error('bad');state={...state,...obj};save();render();setStatus('Import สำเร็จ','var(--green)')}catch(err){setStatus('ไฟล์ไม่ถูกต้อง','var(--red)')}};r.readAsText(f)};
-$id('evCancel').addEventListener('click',()=>{$id('evModal').classList.remove('open')});$id('evSave').addEventListener('click',(e)=>{e.preventDefault();saveEventModal()});$id('evDelete').addEventListener('click',()=>{if(confirm('ลบงานนี้?')){deleteEvent(editingEventId);$id('evModal').classList.remove('open')}});$id('evDone').addEventListener('click',(e)=>{e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(editingEventId));if(ev){$id('evModal').classList.remove('open');openDone(ev)}else{setStatus('ไม่พบงานที่จะบันทึกผู้ทำ','var(--red)')}});
+$id('evCancel').addEventListener('click',()=>{$id('evModal').classList.remove('open')});$id('evSave').addEventListener('click',(e)=>{e.preventDefault();saveEventModal()});$id('evDelete').addEventListener('click',()=>{deleteEvent(editingEventId);$id('evModal').classList.remove('open')});$id('evDone').addEventListener('click',(e)=>{e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(editingEventId));if(ev){$id('evModal').classList.remove('open');openDone(ev)}else{setStatus('ไม่พบงานที่จะบันทึกผู้ทำ','var(--red)')}});
 ptCancel.onclick=()=>patientModal.classList.remove('open');ptSave.onclick=savePatient;ptDelete.onclick=()=>{if(editingPatientId){patientModal.classList.remove('open');deletePatient(editingPatientId)}};
 if(document.getElementById('ptEmojiPresets')){ptEmojiPresets.addEventListener('click',e=>{const b=e.target.closest('.emojiPreset');if(!b)return;ptEmoji.value=b.textContent.trim();ptName.focus();});}
 doneCancel.onclick=()=>doneModal.classList.remove('open');doneSave.onclick=(e)=>{e.preventDefault();e.stopPropagation();saveDone()};staffChips.onclick=e=>{const b=e.target.closest('[data-staff]');if(b)doneBy.value=b.dataset.staff};
 quickCloseBtn.onclick=()=>quickModal.classList.remove('open');quickSaveBtn.onclick=saveQuickAction;quickClearBtn.onclick=clearQuickForm;quickList.onclick=e=>{const ed=e.target.closest('[data-q-edit]');if(ed)editQuickAction(+ed.dataset.qEdit);const rm=e.target.closest('[data-q-remove]');if(rm)removeQuickAction(+rm.dataset.qRemove)};
 staffCloseBtn.onclick=()=>staffModal.classList.remove('open');staffAddBtn.onclick=addStaffName;staffNameInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addStaffName()}});staffList.onclick=e=>{const b=e.target.closest('[data-staff-i]');if(b)removeStaffAt(+b.dataset.staffI)};
-[evModal,patientModal,doneModal,quickModal,staffModal,syncModal].forEach(m=>m.addEventListener('mousedown',e=>{if(e.target===m)m.classList.remove('open')}));
+[evModal,patientModal,doneModal,quickModal,quickDropModal,repeatDeleteModal,staffModal,syncModal].forEach(m=>m.addEventListener('mousedown',e=>{if(e.target===m)m.classList.remove('open')}));
 $id('evRepeat').addEventListener('change',()=>{$id('evIntervalHours').closest('.field').style.display=$id('evRepeat').value==='interval'?'block':'none'});$id('evRepeat').dispatchEvent(new Event('change'));
 $id('quickRepeat')?.addEventListener('change',updateQuickRepeatVisibility);updateQuickRepeatVisibility();
+$id('quickDropRepeat')?.addEventListener('change',updateQuickDropRepeatVisibility);
+$id('quickDropCancel')?.addEventListener('click',()=>{quickDropDraft=null;$id('quickDropModal').classList.remove('open')});
+$id('quickDropCreate')?.addEventListener('click',createQuickDropFromModal);
+$id('repeatDeleteCancel')?.addEventListener('click',closeRepeatDeleteModal);
+$id('repeatDeleteOne')?.addEventListener('click',()=>{const id=repeatDeleteTargetId;closeRepeatDeleteModal();if(id!=null){deleteEvent(id,{group:false,askGroup:false});setStatus('ลบเฉพาะรายการนี้แล้ว','var(--red)')}});
+$id('repeatDeleteAll')?.addEventListener('click',()=>{const id=repeatDeleteTargetId;closeRepeatDeleteModal();if(id!=null){deleteEvent(id,{group:true,askGroup:false});setStatus('ลบทั้งชุดแล้ว','var(--red)')}});
+
 window.addEventListener('online',()=>{setStatus('อินเทอร์เน็ตกลับมาแล้ว · กำลัง reconnect','var(--green)');scheduleReconnect()});
 window.addEventListener('offline',()=>{cloudSync.connected=false;syncLabel();setStatus('อินเทอร์เน็ตหลุด · ใช้ local ต่อชั่วคราว','var(--amber)')});
 load();seed();refreshTimelineRange();render();initCloudSync(true);updateAlertStatus();setTimeout(scrollToNow,80);setTimeout(checkDueAlerts,1500);

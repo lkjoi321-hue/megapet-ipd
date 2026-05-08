@@ -446,6 +446,7 @@ body.quickPanelHidden .rightPanel.quickCollapsed .quickAction:hover:after,body.q
 <div class="field"><label>board path</label><input id="fbBoardPath" value="ipdBoards/megapet-main"/></div>
 </div>
 <div class="syncSmall">หมายเหตุ: ถ้าเพิ่งเปิดครั้งแรก ระบบจะอัปโหลดข้อมูลในเครื่องนี้ขึ้น cloud เป็นฐานข้อมูลแรก</div>
+<pre id="syncDiag" style="background:#f1f5f9;border:1px solid #cbd5e1;border-radius:10px;padding:9px 11px;font-size:11px;line-height:1.6;margin-top:8px;white-space:pre-wrap;word-break:break-all;color:#1e293b;font-family:ui-monospace,monospace"></pre>
 <div style="background:#fff3cd;border:1px solid #ffd700;border-radius:12px;padding:10px 12px;margin-top:10px;font-size:12px;color:#856404">
   <b>⚠️ Force Push — ใช้ข้อมูลเครื่องนี้ทับ Cloud</b><br>
   กดเมื่อข้อมูลไม่ตรงกัน และต้องการให้เครื่องนี้เป็นตัวตั้งต้น<br>
@@ -789,8 +790,15 @@ function initCloudSync(silent=false){
   const cfg=getCloudConfig();
   if(!hasCloudConfig(cfg)){cloudSync.ready=false;cloudSync.connected=false;syncLabel();return false}
   try{
-    if(!window.firebase) throw Error('Firebase SDK โหลดไม่สำเร็จ');
-    if(!firebase.apps.length)firebase.initializeApp({apiKey:cfg.apiKey,authDomain:cfg.authDomain,databaseURL:cfg.databaseURL,projectId:cfg.projectId,appId:cfg.appId});
+    if(!window.firebase) throw Error('Firebase SDK โหลดไม่สำเร็จ — ตรวจสอบ internet connection');
+    if(!cfg.databaseURL) throw Error('กรุณากรอก databaseURL ของ Firebase Realtime Database');
+    // ถ้า app มีอยู่แล้วและ databaseURL ต่างกัน ให้ลบแล้ว init ใหม่
+    if(firebase.apps.length && firebase.apps[0].options.databaseURL && firebase.apps[0].options.databaseURL!==cfg.databaseURL){
+      firebase.apps[0].delete().catch(()=>{});
+    }
+    if(!firebase.apps.length){
+      firebase.initializeApp({apiKey:cfg.apiKey,authDomain:cfg.authDomain,databaseURL:cfg.databaseURL,projectId:cfg.projectId,appId:cfg.appId});
+    }
     const path=(cfg.boardPath||'ipdBoards/megapet-main').replace(/^\/+|\/+$/g,'');
     cloudSync.ref=firebase.database().ref(path);
     cloudSync.ready=true;cloudSync.lastError='';cloudSync.listenersStarted=false;syncLabel();watchFirebaseConnection();
@@ -814,7 +822,16 @@ function initCloudSync(silent=false){
         queueCloudSave(true);
       }
       startCloudListeners();
-    }).catch(err=>{cloudSync.ready=false;cloudSync.lastError=err.message||String(err);syncLabel();setStatus('Firebase read error','var(--red)')});
+    }).catch(err=>{
+      cloudSync.ready=false;cloudSync.lastError=err.message||String(err);syncLabel();
+      const msg=cloudSync.lastError;
+      if(msg.includes('permission')||msg.includes('PERMISSION'))
+        setStatus('❌ Permission denied — ตรวจสอบ Firebase Rules ให้อ่าน/เขียนได้','var(--red)');
+      else if(msg.includes('network')||msg.includes('fetch')||msg.includes('Failed'))
+        setStatus('❌ เชื่อมต่อไม่ได้ — ตรวจสอบ databaseURL และ internet','var(--red)');
+      else
+        setStatus('❌ Firebase: '+msg,'var(--red)');
+    });
     if(!silent)setStatus('Auto Sync พร้อมใช้งาน','var(--green)');
     return true;
   }catch(e){cloudSync.ready=false;cloudSync.lastError=e.message||String(e);syncLabel();setStatus('Sync error: '+cloudSync.lastError,'var(--red)');return false}
@@ -822,7 +839,22 @@ function initCloudSync(silent=false){
 function openSyncModal(){
   const cfg=getCloudConfig();
   ['ApiKey','AuthDomain','DatabaseURL','ProjectId','AppId','BoardPath'].forEach(k=>{const el=$id('fb'+k);if(el){const key=k.charAt(0).toLowerCase()+k.slice(1);el.value=cfg[key]|| (k==='BoardPath'?'ipdBoards/megapet-main':'')}});
-  syncLabel();$id('syncModal').classList.add('open')
+  // Show diagnostic info
+  const diag=$id('syncDiag');
+  if(diag){
+    const lines=[];
+    lines.push(`Firebase SDK: ${window.firebase?'✅ โหลดแล้ว':'❌ โหลดไม่ได้'}`);
+    lines.push(`Apps initialized: ${window.firebase?firebase.apps.length:'-'}`);
+    lines.push(`cloudSync.ready: ${cloudSync.ready}`);
+    lines.push(`cloudSync.connected: ${cloudSync.connected}`);
+    lines.push(`cloudSync.ref: ${cloudSync.ref?'✅ มี ref':'❌ ไม่มี ref'}`);
+    if(cloudSync.lastError)lines.push(`❌ Last error: ${cloudSync.lastError}`);
+    const hasCfg=hasCloudConfig(cfg);
+    lines.push(`Config บันทึกแล้ว: ${hasCfg?'✅':'❌ ยังไม่ได้กรอก'}`);
+    if(cfg.databaseURL)lines.push(`databaseURL: ${cfg.databaseURL}`);
+    diag.textContent=lines.join('\n');
+  }
+  syncLabel();$id('syncModal').classList.add('open');
 }
 function saveSyncSettings(){
   const cfg={apiKey:fbApiKey.value.trim(),authDomain:fbAuthDomain.value.trim(),databaseURL:fbDatabaseURL.value.trim(),projectId:fbProjectId.value.trim(),appId:fbAppId.value.trim(),boardPath:fbBoardPath.value.trim()||'ipdBoards/megapet-main'};

@@ -2370,6 +2370,44 @@ function saveState(){
 
 }
 
+
+// ===== FIREBASE REALTIME SYNC =====
+function loadFirebaseState(){
+
+  try{
+
+    db.ref("megapet-main").on("value",(snapshot)=>{
+
+      const data = snapshot.val();
+
+      if(!data) return;
+
+      console.log("Realtime sync received");
+
+      if(data.patients) patients = data.patients;
+      if(data.events) events = data.events;
+      if(data.quickActions) quickActions = data.quickActions;
+      if(data.staff) staff = data.staff;
+      if(data.wards) wards = data.wards;
+
+      try{
+        paint();
+      }catch(e){
+        console.log("paint sync error",e);
+      }
+
+    });
+
+  }catch(e){
+    console.log("firebase sync error",e);
+  }
+
+}
+
+window.addEventListener("load",()=>{
+  setTimeout(loadFirebaseState,1000);
+});
+
 </script>
 </body>
 </html>

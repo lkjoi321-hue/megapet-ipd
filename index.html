@@ -737,7 +737,7 @@ function applyRemoteCollection(key,val){
   if(key==='staff')state.staff=Array.isArray(val)?val:Object.values(val||{});
   if(key==='quickActions')state.quickActions=Array.isArray(val)?val:Object.values(val||{});
   if(key==='symTemplates')state.symTemplates=Array.isArray(val)?val:Object.values(val||{});
-  if(key==='wards')state.wards=Array.isArray(val)?val:Object.values(val||{});
+  if(key==='wards'){state.wards=Array.isArray(val)?val:Object.values(val||{});}
   if(key==='logs')state.logs=Array.isArray(val)?val:Object.values(val||{});
   if(key==='meta'&&val){state.nextPid=Math.max(state.nextPid||1, Number(val.nextPid)||1);state.nextEid=Math.max(state.nextEid||1, Number(val.nextEid)||1)}
   try{localStorage.setItem('ipd_v16_cloud_sync',JSON.stringify(state))}catch(e){}
@@ -812,6 +812,7 @@ function initCloudSync(silent=false){
         applyRemoteCollection('staff',remote.staff||state.staff);
         applyRemoteCollection('quickActions',remote.quickActions||state.quickActions||DEFAULT_QUICK_ACTIONS);
         applyRemoteCollection('wards',remote.wards||state.wards||[]);
+        applyRemoteCollection('symTemplates',remote.symTemplates||state.symTemplates||DEFAULT_SYM_TEMPLATES);
         applyRemoteCollection('logs',remote.logs||state.logs||[]);
         applyRemoteCollection('meta',remote.meta||{});
         const cs=cloudSnapshot();

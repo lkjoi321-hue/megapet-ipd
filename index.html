@@ -1,4 +1,3 @@
-let audioCtx = null;
 <!DOCTYPE html>
 
 <html lang="th">
@@ -341,35 +340,7 @@ body.quickPanelHidden .rightPanel.quickCollapsed .quickAction:hover:after,body.q
 
 </style>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
-
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCAwGh5vtS18C6iR8OYXvg2Ic-VcXjSwxs",
-  authDomain: "megapetipd.firebaseapp.com",
-  databaseURL: "https://megapetipd-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "megapetipd",
-  storageBucket: "megapetipd.firebasestorage.app",
-  messagingSenderId: "718838331239",
-  appId: "1:718838331239:web:503b0384fec4ce125621c2",
-  measurementId: "G-LGGEQWJLJL"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const db = firebase.database();
-
-window.db = db;
-
-window.audioReady = false;
-window.alertAudio = null;
-
-
-console.log("Firebase Connected");
-</script>
-
-</head>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script></head>
 <body>
 <div id="app">
 <div id="topbar">
@@ -757,7 +728,7 @@ function watchFirebaseConnection(){
 function arrToMap(arr){const out={};(arr||[]).forEach(x=>{if(x&&x.id!=null)out[String(x.id)]=x});return out}
 function mapToArr(v){if(Array.isArray(v))return v; if(!v||typeof v!=='object')return []; return Object.keys(v).map(k=>v[k]).filter(Boolean)}
 function cloudMeta(){return {nextPid:state.nextPid,nextEid:state.nextEid,updatedAt:Date.now(),version:'v41-full-slide-panel'}}
-function cloudSnapshot(){return {patients:arrToMap(state.patients),events:arrToMap(state.events),staff:state.staff||[],quickActions:state.quickActions||[],logs:(state.logs||[]).slice(-80),meta:cloudMeta()}}
+function cloudSnapshot(){return {patients:arrToMap(state.patients),events:arrToMap(state.events),staff:state.staff||[],quickActions:state.quickActions||[],wards:state.wards||[],logs:(state.logs||[]).slice(-80),meta:cloudMeta()}}
 function stable(o){return JSON.stringify(o||null)}
 function diffMap(prefix,curr,last){const updates={};const next={};Object.keys(curr||{}).forEach(id=>{const js=stable(curr[id]);next[id]=js;if(last[id]!==js)updates[prefix+'/'+id]=curr[id]});Object.keys(last||{}).forEach(id=>{if(!(id in next))updates[prefix+'/'+id]=null});return {updates,next};}
 function applyRemoteCollection(key,val){
@@ -786,7 +757,7 @@ function queueCloudSave(force=false){
         const pd=diffMap('patients',snap.patients,cloudSync.sentMaps.patients||{});Object.assign(updates,pd.updates);cloudSync.sentMaps.patients=pd.next;
         const ed=diffMap('events',snap.events,cloudSync.sentMaps.events||{});Object.assign(updates,ed.updates);cloudSync.sentMaps.events=ed.next;
       }
-      for(const key of ['staff','quickActions','logs','meta']){
+      for(const key of ['staff','quickActions','wards','logs','meta']){
         const js=stable(snap[key]);
         if(force||cloudSync.lastSent[key]!==js){updates[key]=snap[key];cloudSync.lastSent[key]=js;}
       }
@@ -801,7 +772,7 @@ function queueCloudSave(force=false){
 function startCloudListeners(){
   if(cloudSync.listenersStarted||!cloudSync.ref)return;
   cloudSync.listenersStarted=true;
-  ['patients','events','staff','quickActions','logs','meta'].forEach(key=>{
+  ['patients','events','staff','quickActions','wards','logs','meta'].forEach(key=>{
     cloudSync.ref.child(key).on('value',snap=>{
       if(cloudSync.applying)return;
       const val=snap.val(); if(val==null)return;
@@ -810,7 +781,7 @@ function startCloudListeners(){
       const cs=cloudSnapshot();
       if(key==='patients')cloudSync.sentMaps.patients=Object.fromEntries(Object.entries(cs.patients).map(([k,v])=>[k,stable(v)]));
       else if(key==='events')cloudSync.sentMaps.events=Object.fromEntries(Object.entries(cs.events).map(([k,v])=>[k,stable(v)]));
-      else cloudSync.lastSent[key]=stable(key==='meta'?cs.meta:cs[key]);
+      else cloudSync.lastSent[key]=stable(key==='meta'?cs.meta:key==='wards'?cs.wards:cs[key]);
       cloudSync.applying=false;
       refreshTimelineRange();render();
     },err=>{cloudSync.ready=false;cloudSync.lastError=err.message||String(err);syncLabel();setStatus('เชื่อมต่อ Firebase ไม่ได้','var(--red)')});
@@ -840,12 +811,13 @@ function initCloudSync(silent=false){
         applyRemoteCollection('events',remote.events||{});
         applyRemoteCollection('staff',remote.staff||state.staff);
         applyRemoteCollection('quickActions',remote.quickActions||state.quickActions||DEFAULT_QUICK_ACTIONS);
+        applyRemoteCollection('wards',remote.wards||state.wards||[]);
         applyRemoteCollection('logs',remote.logs||state.logs||[]);
         applyRemoteCollection('meta',remote.meta||{});
         const cs=cloudSnapshot();
         cloudSync.sentMaps.patients=Object.fromEntries(Object.entries(cs.patients).map(([k,v])=>[k,stable(v)]));
         cloudSync.sentMaps.events=Object.fromEntries(Object.entries(cs.events).map(([k,v])=>[k,stable(v)]));
-        ['staff','quickActions','logs','meta'].forEach(k=>cloudSync.lastSent[k]=stable(cs[k]));
+        ['staff','quickActions','wards','logs','meta'].forEach(k=>cloudSync.lastSent[k]=stable(cs[k]));
         cloudSync.applying=false;
         refreshTimelineRange();render();setStatus('โหลดข้อมูลจาก cloud แล้ว','var(--green)');
       }else{
@@ -1065,8 +1037,6 @@ function thaiShortDate(ts){const d=new Date(ts);return `${d.getDate()}/${d.getMo
 let heartbeatOn=false;
 let liveTickCount=0;
 function updateBoardHeartbeat(){
-const day = new Date();
-
   const now=Date.now();
   liveTickCount++;
   const live=$id('liveClock');
@@ -2354,61 +2324,6 @@ setInterval(()=>{
   renderPanel();
   checkDueAlerts();
 },5000);
-
-function saveState(){
-
-  try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }catch(e){
-    console.log("local save error", e);
-  }
-
-  try{
-    db.ref("megapet-ipd-board").set(state);
-  }catch(e){
-    console.log("firebase save error", e);
-  }
-
-}
-
-
-// ===== FIREBASE REALTIME SYNC =====
-function loadFirebaseState(){
-
-  try{
-
-    db.ref("megapet-main").on("value",(snapshot)=>{
-
-      const data = snapshot.val();
-
-      if(!data) return;
-
-      console.log("Realtime sync received");
-
-      if(data.patients) patients = data.patients;
-      if(data.events) events = data.events;
-      if(data.quickActions) quickActions = data.quickActions;
-      if(data.staff) staff = data.staff;
-      if(data.wards) wards = data.wards;
-
-      try{
-        paint();
-      }catch(e){
-        console.log("paint sync error",e);
-      }
-
-    });
-
-  }catch(e){
-    console.log("firebase sync error",e);
-  }
-
-}
-
-window.addEventListener("load",()=>{
-  setTimeout(loadFirebaseState,1000);
-});
-
 </script>
 </body>
 </html>

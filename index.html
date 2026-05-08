@@ -1565,11 +1565,50 @@ function lineSubToggle(key, val){
 const LINE_ICONS={eat:'🍽️',drink:'💧',mood:'😺',poop:'💩',urine:'🚿',vomit:'🤢',wound:'🩹',med:'💊'};
 const LINE_LABELS={eat:'การกินอาหาร',drink:'การดื่มน้ำ',mood:'อารมณ์/พฤติกรรม',poop:'การขับถ่าย',urine:'ปัสสาวะ',vomit:'อาเจียน',wound:'แผล/ผิวหนัง',med:'ยาและการรักษา'};
 
-function genLineText(){
+async function genLineText(){
   const p=state.patients.find(x=>x.id===lineState.pid);
   const out=$id('lineOutput');
   if(!out)return;
   if(!p){out.value='';return;}
+
+  // === AI GEN via Claude API ===
+  const genBtn=$id('lineGenBtn');
+  if(genBtn){genBtn.disabled=true;genBtn.textContent='⏳ กำลังสร้าง...';}
+  out.value='';
+  try{
+    const now=new Date();
+    const dateStr=`${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()+543}`;
+    const timeStr=`${pad(now.getHours())}:${pad(now.getMinutes())} น.`;
+    const extra=($id('lineExtraNote')?.value||'').trim();
+    const tone=lineState.tone;
+    const toneLabel=tone==='warm'?'อบอุ่น เป็นกันเอง':tone==='pro'?'มืออาชีพ เป็นทางการ':'สั้นกระชับ';
+    const todMs=startOfDayMs(Date.now());
+    const todEnd=todMs+DAY;
+    const todEvs=state.events.filter(e=>e.pid===p.id&&e.start>=todMs&&e.start<todEnd).sort((a,b)=>a.start-b.start);
+    const doneEvs=todEvs.filter(e=>e.done&&!e.isSymLog);
+    const pendingEvs=todEvs.filter(e=>!e.done&&!e.isSymLog);
+    const symEvs=todEvs.filter(e=>e.isSymLog);
+    const evSummary=[
+      symEvs.length?`อาการที่บันทึก: ${symEvs.map(e=>`${timeText(e.start)} ${e.name}${e.symDetail?' ('+e.symDetail+')':''}${e.note?' – '+e.note:''}`).join(', ')}`:null,
+      doneEvs.length?`ทำแล้ว: ${doneEvs.map(e=>`${timeText(e.start)} ${e.name}${e.note?' ('+e.note+')':''}`).join(', ')}`:null,
+      pendingEvs.length?`รอดำเนินการ: ${pendingEvs.map(e=>`${timeText(e.start)} ${e.name}`).join(', ')}`:null,
+    ].filter(Boolean).join('\n');
+    const prompt=`คุณเป็นพยาบาลสัตว์ที่คลินิกสัตว์เลี้ยง กรุณาเขียนข้อความอัปเดตสุขภาพส่งให้เจ้าของสัตว์ทาง LINE\n\nข้อมูลสัตว์ป่วย:\n- ชื่อ: ${p.name} (${p.type||'สัตว์'})\n- HN: ${p.hn||'–'}  กรง: ${p.cage||'–'}\n- โรค/อาการ: ${p.dx||'–'}\n- สัตวแพทย์: ${p.doctor||'–'}\n- วันที่: ${dateStr}  เวลา: ${timeStr}\n\nรายการวันนี้:\n${evSummary||'ยังไม่มีรายการ'}${extra?'\nหมายเหตุ: '+extra:''}\n\nสไตล์: ${toneLabel}${tone==='short'?'\nความยาวไม่เกิน 5 บรรทัด':''}\n\nเขียนข้อความ LINE ให้เลยโดยไม่ต้องมีคำนำหน้า ใช้ emoji ให้เหมาะสม`;
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':'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','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-ipc':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await resp.json();
+    const text=data.content?.map(c=>c.text||'').join('').trim();
+    if(text){
+      out.value=text;
+      if(genBtn){genBtn.disabled=false;genBtn.textContent='🔄 สร้างใหม่';}
+      return;
+    }
+  }catch(e){console.warn('AI gen failed, fallback',e);}
+  if(genBtn){genBtn.disabled=false;genBtn.textContent='🔄 สร้างข้อความ';}
+  // === FALLBACK: template เดิม ===
 
   const now=new Date();
   const dateStr=`${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()+543}`;

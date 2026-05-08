@@ -2353,6 +2353,23 @@ setInterval(()=>{
   renderPanel();
   checkDueAlerts();
 },5000);
+
+function saveState(){
+
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){
+    console.log("local save error", e);
+  }
+
+  try{
+    db.ref("megapet-ipd-board").set(state);
+  }catch(e){
+    console.log("firebase save error", e);
+  }
+
+}
+
 </script>
 </body>
 </html>

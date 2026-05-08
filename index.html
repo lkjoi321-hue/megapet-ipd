@@ -446,6 +446,12 @@ body.quickPanelHidden .rightPanel.quickCollapsed .quickAction:hover:after,body.q
 <div class="field"><label>board path</label><input id="fbBoardPath" value="ipdBoards/megapet-main"/></div>
 </div>
 <div class="syncSmall">หมายเหตุ: ถ้าเพิ่งเปิดครั้งแรก ระบบจะอัปโหลดข้อมูลในเครื่องนี้ขึ้น cloud เป็นฐานข้อมูลแรก</div>
+<div style="background:#fff3cd;border:1px solid #ffd700;border-radius:12px;padding:10px 12px;margin-top:10px;font-size:12px;color:#856404">
+  <b>⚠️ Force Push — ใช้ข้อมูลเครื่องนี้ทับ Cloud</b><br>
+  กดเมื่อข้อมูลไม่ตรงกัน และต้องการให้เครื่องนี้เป็นตัวตั้งต้น<br>
+  <b>ข้อมูลใน Firebase จะถูกแทนที่ทั้งหมด</b>
+  <div style="margin-top:8px"><button class="btn danger" id="forcePushBtn" style="width:100%;font-weight:700">🔼 Force Push: เครื่องนี้ → Firebase</button></div>
+</div>
 <div class="modalBtns"><button class="btn danger" id="syncClearBtn">ปิด Sync</button><button class="btn" id="syncCancelBtn">ยกเลิก</button><button class="btn primary" id="syncSaveBtn">บันทึกและเชื่อมต่อ</button></div>
 </div></div>
 <div class="modalBg" id="summaryModal"><div class="modal" style="width:620px"><h3>สรุปการดูแล</h3>
@@ -826,6 +832,34 @@ function clearSyncSettings(){
   localStorage.removeItem(CLOUD_CFG_KEY);
   try{if(cloudSync.ref)cloudSync.ref.off(); if(cloudSync.connRef)cloudSync.connRef.off()}catch(e){}
   cloudSync.ready=false;cloudSync.connected=false;cloudSync.ref=null;cloudSync.connRef=null;cloudSync.lastError='';cloudSync.listenersStarted=false;syncLabel();$id('syncModal').classList.remove('open');setStatus('ปิด Sync แล้ว ใช้ข้อมูลในเครื่องนี้เท่านั้น','var(--amber)')
+}
+function forcePushToCloud(){
+  if(!cloudSync.ready||!cloudSync.ref){
+    setStatus('ยังไม่ได้เชื่อมต่อ Firebase — กรุณาบันทึก config ก่อน','var(--red)');return;
+  }
+  if(!confirm(`⚠️ Force Push\n\nจะเขียนข้อมูลในเครื่องนี้ทับ Firebase ทั้งหมด\n\nสัตว์ป่วย: ${state.patients.length} ตัว\nงาน: ${state.events.length} รายการ\n\nข้อมูลในเครื่องอื่นจะถูกแทนที่ด้วยข้อมูลชุดนี้\n\nยืนยันหรือไม่?`))return;
+  const btn=$id('forcePushBtn');
+  if(btn){btn.disabled=true;btn.textContent='⏳ กำลัง push...';}
+  setStatus('กำลัง Force Push...','var(--amber)');
+  // Stop incoming listeners temporarily to avoid overwrite
+  cloudSync.applying=true;
+  const snap=cloudSnapshot();
+  // Write entire state to Firebase at once
+  cloudSync.ref.set(snap).then(()=>{
+    // Reset sent maps so future diffs work correctly
+    cloudSync.sentMaps.patients=Object.fromEntries(Object.entries(snap.patients).map(([k,v])=>[k,stable(v)]));
+    cloudSync.sentMaps.events=Object.fromEntries(Object.entries(snap.events).map(([k,v])=>[k,stable(v)]));
+    ['staff','quickActions','logs','meta'].forEach(k=>cloudSync.lastSent[k]=stable(snap[k]));
+    cloudSync.applying=false;
+    cloudSync.lastError='';syncLabel();
+    setStatus(`✅ Force Push สำเร็จ! ข้อมูลเครื่องนี้ขึ้น Firebase แล้ว (${state.patients.length} สัตว์, ${state.events.length} งาน)`,'var(--green)');
+    if(btn){btn.disabled=false;btn.textContent='🔼 Force Push: เครื่องนี้ → Firebase';}
+  }).catch(err=>{
+    cloudSync.applying=false;
+    cloudSync.lastError=err.message||String(err);syncLabel();
+    setStatus('Force Push ไม่สำเร็จ: '+cloudSync.lastError,'var(--red)');
+    if(btn){btn.disabled=false;btn.textContent='🔼 Force Push: เครื่องนี้ → Firebase';}
+  });
 }
 
 
@@ -2190,7 +2224,7 @@ $id('wardList')?.addEventListener('click',e=>{
   const rm=e.target.closest('[data-ward-remove]');if(rm)removeWard(rm.dataset.wardRemove);
 });
 $id('wardMoveBtn')?.addEventListener('click',movePatientWard);
-$id('wardModal')?.addEventListener('mousedown',e=>{if(e.target===$id('wardModal'))$id('wardModal').classList.remove('open')});$id('rangeToggleBtn').onclick=()=>{timelineExpanded=!timelineExpanded;localStorage.setItem('ipd_timeline_expanded',timelineExpanded?'1':'0');refreshTimelineRange();render();setTimeout(scrollToNow,50);setStatus(timelineExpanded?'ขยายช่วง timeline แล้ว':'ย่อช่วง timeline แล้ว','var(--green)')};syncBtn.onclick=openSyncModal;syncSaveBtn.onclick=saveSyncSettings;syncCancelBtn.onclick=()=>syncModal.classList.remove('open');syncClearBtn.onclick=clearSyncSettings;staffBtn.onclick=openStaffModal;staffBtn2.onclick=openStaffModal;quickManageBtn.onclick=openQuickModal;if($id('quickToggleBtn'))$id('quickToggleBtn').onclick=()=>toggleQuickPanel();if($id('quickSlideHandle'))$id('quickSlideHandle').onclick=()=>toggleQuickPanel(false);applyQuickPanelCollapsed(localStorage.getItem('ipd_quick_panel_collapsed')==='1');addPatientBtn.onclick=()=>openPatientModal(null);backupBtn.onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ipd-v41-backup-'+dif(Date.now())+'.json';a.click();URL.revokeObjectURL(a.href)};importBtn.onclick=()=>importFile.click();importFile.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const obj=migrate(JSON.parse(r.result));if(!obj.patients||!obj.events)throw Error('bad');state={...state,...obj};save();render();setStatus('Import สำเร็จ','var(--green)')}catch(err){setStatus('ไฟล์ไม่ถูกต้อง','var(--red)')}};r.readAsText(f)};
+$id('wardModal')?.addEventListener('mousedown',e=>{if(e.target===$id('wardModal'))$id('wardModal').classList.remove('open')});$id('rangeToggleBtn').onclick=()=>{timelineExpanded=!timelineExpanded;localStorage.setItem('ipd_timeline_expanded',timelineExpanded?'1':'0');refreshTimelineRange();render();setTimeout(scrollToNow,50);setStatus(timelineExpanded?'ขยายช่วง timeline แล้ว':'ย่อช่วง timeline แล้ว','var(--green)')};syncBtn.onclick=openSyncModal;syncSaveBtn.onclick=saveSyncSettings;syncCancelBtn.onclick=()=>syncModal.classList.remove('open');syncClearBtn.onclick=clearSyncSettings;$id('forcePushBtn').onclick=forcePushToCloud;staffBtn.onclick=openStaffModal;staffBtn2.onclick=openStaffModal;quickManageBtn.onclick=openQuickModal;if($id('quickToggleBtn'))$id('quickToggleBtn').onclick=()=>toggleQuickPanel();if($id('quickSlideHandle'))$id('quickSlideHandle').onclick=()=>toggleQuickPanel(false);applyQuickPanelCollapsed(localStorage.getItem('ipd_quick_panel_collapsed')==='1');addPatientBtn.onclick=()=>openPatientModal(null);backupBtn.onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ipd-v41-backup-'+dif(Date.now())+'.json';a.click();URL.revokeObjectURL(a.href)};importBtn.onclick=()=>importFile.click();importFile.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const obj=migrate(JSON.parse(r.result));if(!obj.patients||!obj.events)throw Error('bad');state={...state,...obj};save();render();setStatus('Import สำเร็จ','var(--green)')}catch(err){setStatus('ไฟล์ไม่ถูกต้อง','var(--red)')}};r.readAsText(f)};
 $id('evCancel').addEventListener('click',()=>{$id('evModal').classList.remove('open')});$id('evSave').addEventListener('click',(e)=>{e.preventDefault();saveEventModal()});$id('evDelete').addEventListener('click',()=>{deleteEvent(editingEventId);$id('evModal').classList.remove('open')});$id('evDone').addEventListener('click',(e)=>{e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(editingEventId));if(ev){$id('evModal').classList.remove('open');openDone(ev)}else{setStatus('ไม่พบงานที่จะบันทึกผู้ทำ','var(--red)')}});
 ptCancel.onclick=()=>patientModal.classList.remove('open');ptSave.onclick=savePatient;ptDelete.onclick=()=>{if(editingPatientId){patientModal.classList.remove('open');deletePatient(editingPatientId)}};
 if(document.getElementById('ptEmojiPresets')){ptEmojiPresets.addEventListener('click',e=>{const b=e.target.closest('.emojiPreset');if(!b)return;ptEmoji.value=b.textContent.trim();ptName.focus();});}

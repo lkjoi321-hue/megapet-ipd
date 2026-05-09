@@ -1050,6 +1050,7 @@ function updateBoardHeartbeat(){
   if(beat){heartbeatOn=!heartbeatOn; beat.classList.toggle('on',heartbeatOn)}
   if(range)range.textContent=`${timelineExpanded?'ขยาย':'ปกติ'} · ${thaiShortDate(rangeStartMs)}–${thaiShortDate(rangeEndMs-DAY)} · ${clockText(now)}`;
   syncLayoutConstants();
+  const day=new Date(now).toDateString();
   if(day!==currentTimelineDay){
     currentTimelineDay=day;
     refreshTimelineRange();

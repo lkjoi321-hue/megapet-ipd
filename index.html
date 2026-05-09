@@ -1594,9 +1594,10 @@ async function genLineText(){
       pendingEvs.length?`รอดำเนินการ: ${pendingEvs.map(e=>`${timeText(e.start)} ${e.name}`).join(', ')}`:null,
     ].filter(Boolean).join('\n');
     const prompt=`คุณเป็นพยาบาลสัตว์ที่คลินิกสัตว์เลี้ยง กรุณาเขียนข้อความอัปเดตสุขภาพส่งให้เจ้าของสัตว์ทาง LINE\n\nข้อมูลสัตว์ป่วย:\n- ชื่อ: ${p.name} (${p.type||'สัตว์'})\n- HN: ${p.hn||'–'}  กรง: ${p.cage||'–'}\n- โรค/อาการ: ${p.dx||'–'}\n- สัตวแพทย์: ${p.doctor||'–'}\n- วันที่: ${dateStr}  เวลา: ${timeStr}\n\nรายการวันนี้:\n${evSummary||'ยังไม่มีรายการ'}${extra?'\nหมายเหตุ: '+extra:''}\n\nสไตล์: ${toneLabel}${tone==='short'?'\nความยาวไม่เกิน 5 บรรทัด':''}\n\nเขียนข้อความ LINE ให้เลยโดยไม่ต้องมีคำนำหน้า ใช้ emoji ให้เหมาะสม`;
-    const resp=await fetch('/.netlify/functions/claude-proxy',{
+    const proxyUrl='https://api.allorigins.win/raw?url='+encodeURIComponent('https://api.anthropic.com/v1/messages');
+    const resp=await fetch(proxyUrl,{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json','x-api-key':'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','anthropic-version':'2023-06-01'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
     });
     const data=await resp.json();

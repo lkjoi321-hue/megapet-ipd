@@ -1652,12 +1652,12 @@ function renderQuickActions(){
       state.quickActions=list;
       dragIdx=ti;
       renderQuickActions();
-      save(false);
+      save();
     }
     function onUp(){
       dragIdx=null;
       renderQuickActions();
-      save(false);
+      save();
     }
   });
 }
@@ -2174,9 +2174,9 @@ function renderSymChips(){
       state.symTemplates=list;
       dragIdx=ti;
       renderSymChips();
-      save(false);
+      save();
     }
-    function onUp(){dragIdx=null;renderSymChips();save(false);}
+    function onUp(){dragIdx=null;renderSymChips();save();}
   });
 }
 

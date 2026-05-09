@@ -724,7 +724,7 @@ function log(act,data){state.logs.push({at:new Date().toISOString(),act,data});i
 
 
 const CLOUD_CFG_KEY='ipd_v16_firebase_config';
-let cloudSync={ready:false,applying:false,ref:null,timer:null,connected:false,lastError:'',lastSent:{staff:'',quickActions:'',logs:'',meta:''},sentMaps:{patients:{},events:{}},listenersStarted:false,reconnectTimer:null,connRef:null};
+let cloudSync={ready:false,applying:false,ref:null,timer:null,connected:false,lastError:'',lastSent:{staff:'',quickActions:'',symTemplates:'',logs:'',meta:''},sentMaps:{patients:{},events:{}},listenersStarted:false,reconnectTimer:null,connRef:null};
 function getCloudConfig(){try{return JSON.parse(localStorage.getItem(CLOUD_CFG_KEY)||localStorage.getItem('ipd_v15_firebase_config')||'{}')}catch(e){return {}}}
 function setCloudConfig(cfg){localStorage.setItem(CLOUD_CFG_KEY,JSON.stringify(cfg||{}))}
 function hasCloudConfig(c){return !!(c&&c.apiKey&&c.databaseURL&&c.projectId)}
@@ -759,7 +759,7 @@ function watchFirebaseConnection(){
 function arrToMap(arr){const out={};(arr||[]).forEach(x=>{if(x&&x.id!=null)out[String(x.id)]=x});return out}
 function mapToArr(v){if(Array.isArray(v))return v; if(!v||typeof v!=='object')return []; return Object.keys(v).map(k=>v[k]).filter(Boolean)}
 function cloudMeta(){return {nextPid:state.nextPid,nextEid:state.nextEid,updatedAt:Date.now(),version:'v41-full-slide-panel'}}
-function cloudSnapshot(){return {patients:arrToMap(state.patients),events:arrToMap(state.events),staff:state.staff||[],quickActions:state.quickActions||[],wards:state.wards||[],logs:(state.logs||[]).slice(-80),meta:cloudMeta()}}
+function cloudSnapshot(){return {patients:arrToMap(state.patients),events:arrToMap(state.events),staff:state.staff||[],quickActions:state.quickActions||[],symTemplates:state.symTemplates||[],wards:state.wards||[],logs:(state.logs||[]).slice(-80),meta:cloudMeta()}}
 function stable(o){return JSON.stringify(o||null)}
 function diffMap(prefix,curr,last){const updates={};const next={};Object.keys(curr||{}).forEach(id=>{const js=stable(curr[id]);next[id]=js;if(last[id]!==js)updates[prefix+'/'+id]=curr[id]});Object.keys(last||{}).forEach(id=>{if(!(id in next))updates[prefix+'/'+id]=null});return {updates,next};}
 function applyRemoteCollection(key,val){
@@ -788,7 +788,7 @@ function queueCloudSave(force=false){
         const pd=diffMap('patients',snap.patients,cloudSync.sentMaps.patients||{});Object.assign(updates,pd.updates);cloudSync.sentMaps.patients=pd.next;
         const ed=diffMap('events',snap.events,cloudSync.sentMaps.events||{});Object.assign(updates,ed.updates);cloudSync.sentMaps.events=ed.next;
       }
-      for(const key of ['staff','quickActions','wards','logs','meta']){
+      for(const key of ['staff','quickActions','symTemplates','wards','logs','meta']){
         const js=stable(snap[key]);
         if(force||cloudSync.lastSent[key]!==js){updates[key]=snap[key];cloudSync.lastSent[key]=js;}
       }
@@ -803,7 +803,7 @@ function queueCloudSave(force=false){
 function startCloudListeners(){
   if(cloudSync.listenersStarted||!cloudSync.ref)return;
   cloudSync.listenersStarted=true;
-  ['patients','events','staff','quickActions','wards','logs','meta'].forEach(key=>{
+  ['patients','events','staff','quickActions','symTemplates','wards','logs','meta'].forEach(key=>{
     cloudSync.ref.child(key).on('value',snap=>{
       if(cloudSync.applying)return;
       const val=snap.val(); if(val==null)return;
@@ -842,6 +842,7 @@ function initCloudSync(silent=false){
         applyRemoteCollection('events',remote.events||{});
         applyRemoteCollection('staff',remote.staff||state.staff);
         applyRemoteCollection('quickActions',remote.quickActions||state.quickActions||DEFAULT_QUICK_ACTIONS);
+        applyRemoteCollection('symTemplates',remote.symTemplates||state.symTemplates||DEFAULT_SYM_TEMPLATES);
         applyRemoteCollection('wards',remote.wards||state.wards||[]);
         applyRemoteCollection('symTemplates',remote.symTemplates||state.symTemplates||DEFAULT_SYM_TEMPLATES);
         applyRemoteCollection('logs',remote.logs||state.logs||[]);
@@ -849,7 +850,7 @@ function initCloudSync(silent=false){
         const cs=cloudSnapshot();
         cloudSync.sentMaps.patients=Object.fromEntries(Object.entries(cs.patients).map(([k,v])=>[k,stable(v)]));
         cloudSync.sentMaps.events=Object.fromEntries(Object.entries(cs.events).map(([k,v])=>[k,stable(v)]));
-        ['staff','quickActions','wards','logs','meta'].forEach(k=>cloudSync.lastSent[k]=stable(cs[k]));
+        ['staff','quickActions','symTemplates','wards','logs','meta'].forEach(k=>cloudSync.lastSent[k]=stable(cs[k]));
         cloudSync.applying=false;
         refreshTimelineRange();render();setStatus('โหลดข้อมูลจาก cloud แล้ว','var(--green)');
       }else{
@@ -935,7 +936,7 @@ function forcePushToCloud(){
     // Reset sent maps so future diffs work correctly
     cloudSync.sentMaps.patients=Object.fromEntries(Object.entries(snap.patients).map(([k,v])=>[k,stable(v)]));
     cloudSync.sentMaps.events=Object.fromEntries(Object.entries(snap.events).map(([k,v])=>[k,stable(v)]));
-    ['staff','quickActions','logs','meta'].forEach(k=>cloudSync.lastSent[k]=stable(snap[k]));
+    ['staff','quickActions','symTemplates','logs','meta'].forEach(k=>cloudSync.lastSent[k]=stable(snap[k]));
     cloudSync.applying=false;
     cloudSync.lastError='';syncLabel();
     setStatus(`✅ Force Push สำเร็จ! ข้อมูลเครื่องนี้ขึ้น Firebase แล้ว (${state.patients.length} สัตว์, ${state.events.length} งาน)`,'var(--green)');

@@ -1600,6 +1600,7 @@ async function genLineText(){
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
     });
     const data=await resp.json();
+    console.log('AI response:',JSON.stringify(data).slice(0,300));
     const text=data.content?.map(c=>c.text||'').join('').trim();
     if(text){
       out.value=text;

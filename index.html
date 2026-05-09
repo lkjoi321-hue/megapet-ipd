@@ -229,8 +229,8 @@ body{background:radial-gradient(ellipse 120% 80% at 15% 0%,#cef2e0 0%,#e8f5ef 30
 .avatar{width:42px;height:42px;border-radius:15px;font-size:22px;box-shadow:0 4px 10px rgba(15,41,34,.11)}
 .pName{font-size:14px;font-weight:700;letter-spacing:-.15px;color:var(--c-text)}
 .pMeta{font-size:10px;font-weight:600;color:var(--c-muted);margin-top:2px}
-.hActions{display:flex!important;gap:4px!important;width:100%!important;justify-content:space-between!important}
-.mini{border:none!important;border-radius:50%!important;width:28px!important;height:28px!important;font-size:13px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important}
+.hActions{display:flex!important;gap:2px!important;width:100%!important;justify-content:space-between!important}
+.mini{border:none!important;border-radius:50%!important;width:22px!important;height:22px!important;font-size:11px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important}
 .mini:hover{background:var(--c-mint-light);border-color:rgba(10,168,112,.4);color:var(--c-mint-dark)}
 .mini.danger{background:#fff!important;color:#e53e3e!important;border-color:#e53e3e!important}
 .mini.danger:hover{background:#fff0f0!important}
@@ -576,6 +576,22 @@ body.quickPanelHidden .rightPanel.quickCollapsed .quickAction:hover:after,body.q
 </div>
 </div>
 <div id="printArea"></div>
+<div class="modalBg" id="dischargeModal">
+<div class="modal" style="width:560px;max-height:90vh;display:flex;flex-direction:column">
+  <h3>🏠 กลับบ้าน</h3>
+  <div id="dischargePtInfo" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8f4ff;border:1px solid #ddd6fe;border-radius:13px;margin-bottom:12px;flex-shrink:0"></div>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-shrink:0">
+    <button class="btn primary" id="dischargeGenBtn" style="font-size:11px;padding:5px 12px">✨ สรุปด้วย AI</button>
+    <div id="dischargeAiStatus" style="font-size:11px;color:var(--muted)"></div>
+  </div>
+  <textarea id="dischargeSummary" style="flex:1;min-height:260px;border:1px solid var(--line2);border-radius:12px;padding:10px;font-size:12px;line-height:1.6;resize:vertical;outline:none;font-family:inherit"></textarea>
+  <div class="modalBtns" style="flex-shrink:0;margin-top:10px">
+    <button class="btn" id="dischargeClose">ยกเลิก</button>
+    <button class="btn" id="dischargePrint">🖨️ พิมพ์</button>
+    <button class="btn primary" id="dischargeConfirm" style="background:#7c3aed;border-color:#7c3aed">🏠 ยืนยันกลับบ้าน</button>
+  </div>
+</div>
+</div>
 <div class="modalBg" id="taskBoardModal">
 <div class="modal" style="width:700px;max-height:90vh;display:flex;flex-direction:column">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-shrink:0">
@@ -1014,7 +1030,7 @@ function renderSummary(){const n=Date.now(), tod=startOfDayMs(n), todEnd=tod+DAY
 function matchingFocusEvents(type){const n=Date.now(), tod=startOfDayMs(n), todEnd=tod+DAY;let list=[];if(type==='overdue')list=state.events.filter(e=>!e.done&&e.start+e.dur*MIN<n&&inRange(e));else if(type==='soon')list=state.events.filter(e=>!e.done&&e.start>=n&&e.start<=n+60*MIN&&inRange(e));else if(type==='today')list=state.events.filter(e=>e.start>=tod&&e.start<todEnd&&inRange(e));return list.sort((a,b)=>a.start-b.start)}
 function focusEvents(type){const list=matchingFocusEvents(type);document.querySelectorAll('.ev.focusFlash').forEach(el=>el.classList.remove('focusFlash'));if(!list.length){const label=type==='overdue'?'งานเกินเวลา':type==='soon'?'งานใน 1 ชั่วโมง':'งานวันนี้';setStatus(`ไม่พบ${label}ในช่วง timeline ที่แสดง`,'var(--amber)');return}selectedId=list[0].id;const first=list[0];mainScroll.scrollTo({top:Math.max(0,yFromTs(first.start)-160),behavior:'smooth'});setTimeout(()=>{document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'));list.forEach(e=>{const el=document.querySelector(`.ev[data-eid="${e.id}"]`);if(el){el.classList.add('focusFlash');if(e.id===first.id)el.classList.add('selected')}});const label=type==='overdue'?'งานเกินเวลา':type==='soon'?'งานใน 1 ชั่วโมง':'งานวันนี้';setStatus(`พบ${label} ${list.length} รายการ`,'var(--green)')},260)}
 function buildFixed(){dateInner=document.getElementById('date-inner');timeInner=document.getElementById('time-inner');dateInner.innerHTML='';timeInner.innerHTML='';const todayStr=dif(Date.now());for(let day=0;day<TOTAL_DAYS;day++){const d=new Date(rangeStartMs+day*DAY);const db=document.createElement('div');db.className='dateBlock'+(dif(d)===todayStr?' today':'');db.innerHTML=`<div class="dateText">${thaiDateB(d)}</div>`;dateInner.appendChild(db)}for(let i=0;i<TOTAL_H;i++){const t=document.createElement('div');t.className='timeLabel';t.textContent=`${pad(i%24)}:00`;timeInner.appendChild(t)}}
-function buildLanes(){const lanes=document.getElementById('lanes');lanes.innerHTML='<div id="nowLine"><span id="nowClock"></span></div>';[...state.patients].sort((a,b)=>(a.ci??a.id)-(b.ci??b.id)).forEach(p=>{const lane=document.createElement('div');lane.className='lane';lane.dataset.pid=p.id;const c=COLORS[p.id%COLORS.length];const ward=wardById(p.wardId||'');const wardTagHtml=ward?`<span class="wardTag" style="background:${esc(ward.color)}22;color:${esc(ward.color)};border:1px solid ${esc(ward.color)}55">${esc(ward.name)}</span>`:'';lane.innerHTML=`<div class="laneHeader" draggable="true" data-ward-drag-pid="${p.id}"><div class="lhTop"><div class="avatar" data-drag-pid="${p.id}" style="background:${c}">${esc(p.emoji||typeEmoji(p.type))}</div><div class="pInfo"><div class="pName">${esc(p.name)}</div><div class="pMeta">${wardTagHtml||''}</div></div></div><div class="hActions"><button class="mini line-btn" data-act="line" data-pid="${p.id}" title="ส่ง LINE"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button><button class="mini sum-btn" data-act="summary" data-pid="${p.id}" title="สรุปวันนี้"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></button><button class="mini edit-btn" data-act="editPt" data-pid="${p.id}" title="แก้ไข"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="mini add-btn" data-act="addEv" data-pid="${p.id}" title="เพิ่มงาน"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button></div></div>`;for(let i=0;i<TOTAL_H;i++){const cell=document.createElement('div');cell.className='hourCell';cell.dataset.pid=p.id;cell.dataset.hour=i;lane.appendChild(cell)}state.events.filter(e=>e.pid===p.id&&inRange(e)).sort((a,b)=>a.start-b.start).forEach(e=>lane.appendChild(makeEvent(e,p,c)));lanes.appendChild(lane)});const add=document.createElement('div');add.className='addLane';add.innerHTML='<div class="addHead" id="addLaneBtn">+<br><small>สัตว์</small></div>';for(let i=0;i<TOTAL_H;i++){const c=document.createElement('div');c.className='hourCell';add.appendChild(c)}lanes.appendChild(add);if(selectedId){const el=document.querySelector(`.ev[data-eid="${selectedId}"]`);if(el)el.classList.add('selected')}applyWardFilter();}
+function buildLanes(){const lanes=document.getElementById('lanes');lanes.innerHTML='<div id="nowLine"><span id="nowClock"></span></div>';[...state.patients].sort((a,b)=>(a.ci??a.id)-(b.ci??b.id)).forEach(p=>{const lane=document.createElement('div');lane.className='lane';lane.dataset.pid=p.id;const c=COLORS[p.id%COLORS.length];const ward=wardById(p.wardId||'');const wardTagHtml=ward?`<span class="wardTag" style="background:${esc(ward.color)}22;color:${esc(ward.color)};border:1px solid ${esc(ward.color)}55">${esc(ward.name)}</span>`:'';lane.innerHTML=`<div class="laneHeader" draggable="true" data-ward-drag-pid="${p.id}"><div class="lhTop"><div class="avatar" data-drag-pid="${p.id}" style="background:${c}">${esc(p.emoji||typeEmoji(p.type))}</div><div class="pInfo"><div class="pName">${esc(p.name)}</div><div class="pMeta">${wardTagHtml||''}</div></div></div><div class="hActions"><button class="mini line-btn" data-act="line" data-pid="${p.id}" title="ส่ง LINE"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button><button class="mini sum-btn" data-act="summary" data-pid="${p.id}" title="สรุปวันนี้"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></button><button class="mini edit-btn" data-act="editPt" data-pid="${p.id}" title="แก้ไข"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="mini add-btn" data-act="addEv" data-pid="${p.id}" title="เพิ่มงาน"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button><button class="mini" data-act="discharge" data-pid="${p.id}" title="กลับบ้าน" style="background:#f0e8ff!important;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button></div></div>`;for(let i=0;i<TOTAL_H;i++){const cell=document.createElement('div');cell.className='hourCell';cell.dataset.pid=p.id;cell.dataset.hour=i;lane.appendChild(cell)}state.events.filter(e=>e.pid===p.id&&inRange(e)).sort((a,b)=>a.start-b.start).forEach(e=>lane.appendChild(makeEvent(e,p,c)));lanes.appendChild(lane)});const add=document.createElement('div');add.className='addLane';add.innerHTML='<div class="addHead" id="addLaneBtn">+<br><small>สัตว์</small></div>';for(let i=0;i<TOTAL_H;i++){const c=document.createElement('div');c.className='hourCell';add.appendChild(c)}lanes.appendChild(add);if(selectedId){const el=document.querySelector(`.ev[data-eid="${selectedId}"]`);if(el)el.classList.add('selected')}applyWardFilter();}
 function makeEvent(ev,p,c){const el=document.createElement('div');const st=eventStatus(ev);el.className='ev '+st+(selectedId===ev.id?' selected':'')+(ev.isSymLog?' sym-log':'');el.dataset.eid=ev.id;el.style.top=yFromTs(ev.start)+'px';el.style.height=Math.max(32,ev.dur*MPX)+'px';el.style.borderLeftColor=ev.isSymLog?'#f97316':c;el.style.background=ev.isSymLog?'linear-gradient(135deg,#fff8f2,#fff3e8)':(ev.cat==='medicine'?'#eef7ff':ev.cat==='procedure'?'#f6f0ff':'#effaf5');el.style.color='#1f342d';
   const symTagHtml=ev.isSymLog&&ev.symDetail?`<div class="symTag">${esc(ev.symDetail)}</div>`:'';
   const quickEdit=`<button class="evEditMini" data-edit-eid="${ev.id}" title="แก้ไขงาน">✎</button>`;
@@ -1237,6 +1253,73 @@ function setAutoFollow(on){
   } else {
     if(autoFollowTimer){clearInterval(autoFollowTimer);autoFollowTimer=null;}
   }
+}
+// ===== DISCHARGE =====
+let dischargePid=null;
+function buildDischargeTemplate(p){
+  const evs=state.events.filter(e=>e.pid===p.id).sort((a,b)=>a.start-b.start);
+  const now=new Date();
+  const admitDate=evs.length?new Date(evs[0].start):now;
+  const days=Math.max(1,Math.ceil((now-admitDate)/(1000*60*60*24)));
+  let lines=[];
+  lines.push(`🏠 สรุปการรักษา — น้อง${p.name}`);
+  lines.push(`${'─'.repeat(34)}`);
+  lines.push(`สัตว์: ${p.type||'-'}  |  HN: ${p.hn||'-'}  |  กรง: ${p.cage||'-'}`);
+  if(p.dx)lines.push(`การวินิจฉัย: ${p.dx}`);
+  if(p.doctor)lines.push(`แพทย์: ${p.doctor}`);
+  lines.push(`ระยะเวลาพัก: ${days} วัน`);
+  lines.push('');
+  const byDay={};
+  evs.forEach(e=>{const d=new Date(e.start).toLocaleDateString('th-TH');if(!byDay[d])byDay[d]=[];byDay[d].push(e);});
+  Object.entries(byDay).forEach(([day,dayEvs])=>{
+    lines.push(`📅 ${day}`);
+    dayEvs.forEach(e=>{const st=e.done?'✅':'⏳';const who=e.doneBy?` (${e.doneBy})`:'';lines.push(`  ${st} ${timeText(e.start)} ${e.name}${who}${e.note?' — '+e.note:''}`);});
+  });
+  lines.push('');
+  lines.push(`วันที่จำหน่าย: ${now.toLocaleDateString('th-TH')} ${now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})} น.`);
+  return lines.join('\n');
+}
+async function genDischargeSummary(p){
+  const btn=$id('dischargeGenBtn');
+  const status=$id('dischargeAiStatus');
+  btn.disabled=true;btn.textContent='⏳ กำลังสร้าง...';status.textContent='';
+  const evs=state.events.filter(e=>e.pid===p.id).sort((a,b)=>a.start-b.start);
+  const timeline=evs.map(e=>[new Date(e.start).toLocaleDateString('th-TH'),timeText(e.start),'—',e.name,(e.done?'[เสร็จ'+(e.doneBy?' โดย '+e.doneBy:'')+']':'[ค้าง]'),(e.note?'('+e.note+')':'')].join(' ')).join('\n');
+  const lines=[
+    'คุณเป็นสัตวแพทย์ที่เขียนสรุปการรักษาสัตว์ป่วยภาษาไทย',
+    '',
+    'ข้อมูลสัตว์ป่วย:',
+    'ชื่อ: น้อง'+p.name+' ('+( p.type||'สัตว์')+')',
+    'HN: '+(p.hn||'-')+' กรง: '+(p.cage||'-'),
+    'การวินิจฉัย: '+(p.dx||'-'),
+    'แพทย์: '+(p.doctor||'-'),
+    '',
+    'Timeline:',
+    timeline||'ไม่มีข้อมูล',
+    '',
+    'เขียนสรุปการรักษากระชับ เหมาะส่งให้เจ้าของสัตว์ รวมสิ่งที่ทำไปแล้วและคำแนะนำหลังกลับบ้าน ใช้ emoji เล็กน้อย'
+  ];
+  const prompt=lines.join('\n');
+  try{
+    const body=JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,messages:[{role:'user',content:prompt}]});
+    const res=await fetch('https://soft-mud-1053.lkjoi321.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},body});
+    const data=await res.json();
+    const txt=(data.content||[]).map(x=>x.text||'').join('').trim();
+    if(txt){$id('dischargeSummary').value=txt;status.textContent='✅ สร้างแล้ว';}
+    else{console.error('discharge AI empty',data);status.textContent='❌ ไม่ได้รับข้อความ';}
+  }catch(err){console.error('discharge AI err',err);status.textContent='❌ เชื่อมต่อไม่ได้';}
+  btn.disabled=false;btn.textContent='✨ สรุปด้วย AI';
+}
+function openDischargeModal(pid){
+  dischargePid=pid;
+  const p=state.patients.find(x=>x.id===pid);if(!p)return;
+  const C=['#23b486','#3b82f6','#8b5cf6','#f59e0b','#ef4444','#06b6d4','#84cc16'];
+  const c=C[p.id%C.length];
+  $id('dischargePtInfo').innerHTML=`<div style="width:44px;height:44px;border-radius:12px;background:${c};display:grid;place-items:center;font-size:22px;flex-shrink:0">${esc(p.emoji||'🐾')}</div><div><div style="font-weight:800;font-size:14px">${esc(p.name)}</div><div style="font-size:11px;color:var(--muted)">HN: ${esc(p.hn||'-')} · กรง: ${esc(p.cage||'-')} · ${esc(p.type||'-')}</div>${p.dx?'<div style="font-size:11px;margin-top:2px">'+esc(p.dx)+'</div>':''}</div>`;
+  $id('dischargeSummary').value=buildDischargeTemplate(p);
+  $id('dischargeAiStatus').textContent='';
+  $id('dischargeGenBtn').disabled=false;$id('dischargeGenBtn').textContent='✨ สรุปด้วย AI';
+  $id('dischargeModal').classList.add('open');
 }
 function scrollToNow(){const ms=document.getElementById('main-scroll');ms.scrollTop=Math.max(0,yFromTs(Date.now())-ms.clientHeight/2)}
 function syncFixedScroll(){document.getElementById('left-date').scrollTop=mainScroll.scrollTop;document.getElementById('left-time').scrollTop=mainScroll.scrollTop}
@@ -2406,7 +2489,7 @@ const mainScroll=document.getElementById('main-scroll');
 mainScroll.addEventListener('scroll',syncFixedScroll);
 mainScroll.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;const evEl=e.target.closest('.ev');if(evEl&&!drag&&!resize){const ev=state.events.find(x=>x.id===+evEl.dataset.eid);if(ev)showTT(ev,e.clientX,e.clientY)}});
 mainScroll.addEventListener('mouseleave',hideTT);
-mainScroll.addEventListener('click',e=>{const editBtn=e.target.closest('[data-edit-eid]');if(editBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(editBtn.dataset.editEid));if(ev)openEventModal(ev,ev.pid);return}const undoneBtn=e.target.closest('[data-undone-eid]');if(undoneBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(undoneBtn.dataset.undoneEid));if(ev&&confirm(`ยกเลิกการทำงาน "${ev.name}"?`)){ev.done=false;ev.doneBy='';ev.doneAt=null;ev.doneNote='';save(false);render();setStatus('ยกเลิกการทำแล้ว','var(--amber)');}return}const doneBtn=e.target.closest('[data-done-eid]');if(doneBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(doneBtn.dataset.doneEid));if(ev)openDone(ev);return}const btn=e.target.closest('button[data-act]');if(btn){const pid=+btn.dataset.pid, act=btn.dataset.act;if(act==='summary')openCareSummary(pid);if(act==='line')openLineModal(pid);if(act==='addEv')openEventModal(null,pid,Date.now());if(act==='editPt')openPatientModal(state.patients.find(p=>p.id===pid));return}if(e.target.closest('#addLaneBtn'))return openPatientModal(null);const evEl=e.target.closest('.ev');if(evEl){selectedId=+evEl.dataset.eid;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'));evEl.classList.add('selected');return}if(!e.target.closest('.laneHeader')){selectedId=null;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'))}});
+mainScroll.addEventListener('click',e=>{const editBtn=e.target.closest('[data-edit-eid]');if(editBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(editBtn.dataset.editEid));if(ev)openEventModal(ev,ev.pid);return}const undoneBtn=e.target.closest('[data-undone-eid]');if(undoneBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(undoneBtn.dataset.undoneEid));if(ev&&confirm(`ยกเลิกการทำงาน "${ev.name}"?`)){ev.done=false;ev.doneBy='';ev.doneAt=null;ev.doneNote='';save(false);render();setStatus('ยกเลิกการทำแล้ว','var(--amber)');}return}const doneBtn=e.target.closest('[data-done-eid]');if(doneBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(doneBtn.dataset.doneEid));if(ev)openDone(ev);return}const btn=e.target.closest('button[data-act]');if(btn){const pid=+btn.dataset.pid, act=btn.dataset.act;if(act==='summary')openCareSummary(pid);if(act==='line')openLineModal(pid);if(act==='addEv')openEventModal(null,pid,Date.now());if(act==='editPt')openPatientModal(state.patients.find(p=>p.id===pid));if(act==='discharge')openDischargeModal(pid);return}if(e.target.closest('#addLaneBtn'))return openPatientModal(null);const evEl=e.target.closest('.ev');if(evEl){selectedId=+evEl.dataset.eid;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'));evEl.classList.add('selected');return}if(!e.target.closest('.laneHeader')){selectedId=null;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'))}});
 mainScroll.addEventListener('dblclick',e=>{const evEl=e.target.closest('.ev');if(evEl){e.preventDefault();e.stopPropagation();hideTT();const ev=state.events.find(x=>x.id===+evEl.dataset.eid);if(ev)openEventModal(ev,ev.pid);return}const cell=e.target.closest('.hourCell[data-pid]');if(cell){const lane=cell.closest('.lane');const rect=lane.getBoundingClientRect();const y=e.clientY-rect.top;const ts=clampTs(roundTs(tsFromY(y),15),30);openEventModal(null,+cell.dataset.pid,ts)}});
 $id('summaryClose').onclick=()=> $id('summaryModal').classList.remove('open');
 $id('summaryCopy').onclick=copyCareSummary;
@@ -2585,6 +2668,26 @@ $id('taskBoardPrintBtn')?.addEventListener('click',()=>{
   window.print();
 });
 $id('wardManageBtn')?.addEventListener('click',openWardModal);
+$id('dischargeClose')?.addEventListener('click',()=>$id('dischargeModal').classList.remove('open'));
+$id('dischargeModal')?.addEventListener('mousedown',e=>{if(e.target===$id('dischargeModal'))$id('dischargeModal').classList.remove('open')});
+$id('dischargeGenBtn')?.addEventListener('click',()=>{const p=state.patients.find(x=>x.id===dischargePid);if(p)genDischargeSummary(p);});
+$id('dischargePrint')?.addEventListener('click',()=>{
+  const p=state.patients.find(x=>x.id===dischargePid);if(!p)return;
+  const txt=$id('dischargeSummary').value;
+  printArea.innerHTML=`<div class="printHeader"><div class="printTitle">🏠 สรุปการรักษา — น้อง${esc(p.name)}</div><div class="printMeta">พิมพ์ ${new Date().toLocaleString('th-TH')}</div></div><pre style="font-size:13px;line-height:1.8;white-space:pre-wrap;font-family:inherit">${esc(txt)}</pre>`;
+  window.print();
+});
+$id('dischargeConfirm')?.addEventListener('click',()=>{
+  const p=state.patients.find(x=>x.id===dischargePid);if(!p)return;
+  if(!confirm(`ยืนยันให้น้อง${p.name} กลับบ้าน?
+lane จะถูกลบออกจากบอร์ด`))return;
+  state.logs.push({type:'discharge',pid:p.id,name:p.name,ts:Date.now(),summary:$id('dischargeSummary').value});
+  state.patients=state.patients.filter(x=>x.id!==dischargePid);
+  state.events=state.events.filter(x=>x.pid!==dischargePid);
+  $id('dischargeModal').classList.remove('open');
+  save();render();
+  setStatus(`น้อง${p.name} กลับบ้านแล้ว 🏠`,'var(--green)');
+});
 $id('wardChips')?.addEventListener('click',e=>{
   const chip=e.target.closest('[data-ward-id]');if(!chip)return;
   activeWard=chip.dataset.wardId||null;

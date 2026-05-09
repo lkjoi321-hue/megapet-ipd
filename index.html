@@ -24,7 +24,7 @@ button,input,textarea,select{font:inherit}
 .rangeBtn{font-weight:800;border-color:rgba(35,180,134,.35);background:#f1fff9;color:#0f6b50}.rangeBtn.on{background:#173f78;color:white;border-color:#173f78}
 .liveClock b{font-variant-numeric:tabular-nums;font-size:13px;font-weight:700;color:#173f78;letter-spacing:.3px}.liveClock small{font-size:10px;color:var(--muted);display:block;line-height:1.1;max-width:160px;overflow:hidden;text-overflow:ellipsis}.liveClock.live-ok{border-color:rgba(22,163,74,.45);box-shadow:0 0 0 2px rgba(22,163,74,.08)}.beat{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(22,163,74,.45)}.beat.on{animation:beatPulse 1s ease-out infinite}@keyframes beatPulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.5)}70%{box-shadow:0 0 0 7px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
 #summary{display:flex;gap:8px;padding:6px 12px;background:#f8fdfb;border-bottom:1px solid #e0ede8;flex-shrink:0;align-items:center}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow)}.stat{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e8f0ec;border-radius:14px;padding:7px 14px;white-space:nowrap;flex-shrink:0}.stat.clickable{cursor:pointer;transition:background .15s,border-color .15s}.stat.clickable:hover{background:#f0faf5;border-color:#b2d8c8}.stat b{font-size:20px;font-weight:800;line-height:1}.stat span{font-size:11px;color:var(--muted);font-weight:600}.stat.warn b{color:#d97706}.stat.bad b{color:#dc2626}.stat.good b{color:#16a34a}.statIcon{font-size:18px;line-height:1}.urgentBoard{flex:1;display:flex;align-items:center;gap:8px;overflow:hidden}.urgentList{display:flex;gap:6px;overflow-x:auto;padding:2px 0;flex:1}.urgentChip{border:1px solid var(--line);background:#fbfffd;border-radius:999px;padding:5px 10px;font-size:11px;white-space:nowrap;cursor:pointer;display:flex;gap:5px;align-items:center;font-weight:600}.urgentChip:hover{filter:brightness(.97)}.urgentChip.overdue{background:#fff1f1;border-color:#fca5a5;color:#991b1b}.urgentChip.soon{background:#fffbeb;border-color:#fcd34d;color:#92400e}.urgentChip.empty{cursor:default;color:var(--muted);font-size:11px}.urgentMore{font-size:11px;color:var(--muted);white-space:nowrap;font-weight:600}.urgentChip.manage{position:relative}.urgentActionInfo{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fbfffd;margin-bottom:12px}.urgentActionInfo b{display:block;font-size:16px;margin-bottom:4px}.urgentActionInfo div{font-size:12px;color:var(--muted);line-height:1.45}.urgentActionBtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.urgentActionBtns .btn{width:100%}
-#workspace{display:grid;grid-template-columns:1fr 290px;gap:12px;padding:0 14px 14px;min-height:0;flex:1}.boardShell{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;min-width:0;display:flex}.rightPanel{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:auto;padding:14px}
+#workspace{display:grid;grid-template-columns:1fr 200px;gap:12px;padding:0 14px 14px;min-height:0;flex:1}.boardShell{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;min-width:0;display:flex}.rightPanel{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:auto;padding:14px}
 #left-date{width:var(--dayW);flex-shrink:0;border-right:1px solid var(--line);background:#fbfffd;overflow:hidden}#left-date .spacer{height:var(--head);border-bottom:1px solid var(--line);background:var(--panel2)}#date-inner{position:relative}.dateBlock{height:calc(24 * var(--hour));border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center}.dateBlock.today{background:#fff4f4}.dateText{font-size:9px;font-weight:900;color:var(--muted);line-height:1.2;text-align:center;padding:4px 0;white-space:nowrap;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.3px}.dateBlock.today .dateText{color:var(--red)}
 #left-time{width:var(--timeW);flex-shrink:0;border-right:1px solid var(--line);background:#fbfffd;overflow:hidden}#left-time .spacer{height:var(--head);border-bottom:1px solid var(--line);background:var(--panel2)}.timeLabel{height:var(--hour);border-bottom:1px solid var(--line);font-size:11px;color:var(--soft);padding:5px 7px}
 #main-scroll{flex:1;overflow:auto;position:relative;background:#fff}#lanes{display:flex;position:relative;min-height:100%}.lane{min-width:140px;max-width:140px;width:140px;flex:none;border-right:1px solid var(--line);position:relative;background:#fff}.laneHeader{position:sticky;top:0;z-index:20;background:#fff;backdrop-filter:blur(6px);border-bottom:2px solid #06C755;padding:8px 8px 10px;display:flex;flex-direction:column;gap:6px;overflow:hidden;cursor:grab}.laneHeader:active{cursor:grabbing}.lhTop{display:flex;align-items:center;gap:8px}.avatar{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;color:white;font-weight:800;font-size:24px;flex-shrink:0;cursor:grab}.pInfo{min-width:0;flex:1;overflow:hidden}.pName{font-weight:900;font-size:13px;white-space:normal;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.2}.pMeta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}.hActions{display:flex;gap:4px;width:100%;justify-content:space-between}.mini{border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:14px;line-height:1;background:#f0f0f0;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0}.mini.line-btn{background:#06C755!important}.mini.line-btn:hover{background:#05a847!important}.mini.sum-btn{background:#e8f4ff}.mini.sum-btn:hover{background:#cce4ff}.mini.edit-btn{background:#fff3e0}.mini.edit-btn:hover{background:#ffe0b2}.mini.add-btn{background:#e8fff0}.mini.add-btn:hover{background:#c8f5d8}.mini.danger{background:#fff0f0}.mini.danger:hover{background:#ffd5d5}
@@ -42,18 +42,18 @@ button,input,textarea,select{font:inherit}
 .ptListItem{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:13px;margin-bottom:7px;cursor:pointer;transition:background .12s,border-color .12s}.ptListItem:hover{background:#f0faf5;border-color:#b2d8c8}.ptListAvatar{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff;font-weight:800}.ptListName{font-weight:800;font-size:13px;color:var(--text)}.ptListMeta{font-size:11px;color:var(--muted);margin-top:2px}.ptListWard{font-size:10px;border-radius:999px;padding:2px 8px;font-weight:700;display:inline-block;margin-top:3px}.ward-drop-over{outline:3px dashed #06C755;outline-offset:2px;background:#e8fff0!important}.lane.dragging-ward .laneHeader{opacity:.6}.alertBadge{display:inline-flex;align-items:center;gap:5px;font-size:11px;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;border-radius:999px;padding:4px 8px;margin-top:8px}.dropPreview{border:1px solid var(--line);border-radius:14px;background:#fbfffd;padding:10px 12px;margin-bottom:10px}.dropPreview b{font-size:14px}.dropPreview small{display:block;color:var(--muted);margin-top:3px}
 #printArea{display:none}
 /* ===== SYMPTOM LOG ===== */
-.symPanel{margin-top:12px;border:1px solid var(--line);border-radius:20px;padding:12px;background:linear-gradient(180deg,#fff,#fff8f5);box-shadow:0 3px 12px rgba(180,60,20,.05)}
+.symPanel{margin-top:7px;border:1px solid rgba(202,224,214,.8);border-radius:var(--r-lg);padding:10px;background:linear-gradient(180deg,#fff,#f7fbf9);box-shadow:var(--sh-xs)}
 .symPanelHeader{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-.symPanelTitle{font-size:13px;font-weight:950;color:#9a3412;letter-spacing:.1px;margin:0}
-.symGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.symChip{border:1px solid #f6d5c2;background:#fff8f5;border-radius:14px;padding:8px 8px;cursor:grab;user-select:none;font-size:12px;font-weight:800;display:flex;align-items:center;gap:6px;touch-action:none;transition:background .1s,transform .1s,box-shadow .1s}
-.symChip:hover{background:#fff0ea;border-color:#f6a58a;transform:translateY(-1px);box-shadow:0 5px 14px rgba(200,80,40,.10)}
+.symPanelTitle{font-size:13px;font-weight:900;color:var(--c-navy);letter-spacing:.1px;margin:0}
+.symGrid{display:grid;grid-template-columns:1fr;gap:5px}
+.symChip{border:1px solid var(--c-border);background:var(--c-surface2);border-radius:12px;padding:8px 7px;cursor:grab;user-select:none;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:6px;touch-action:none;box-shadow:var(--sh-xs);transition:all .14s}
+.symChip:hover{background:var(--c-mint-light);border-color:rgba(10,168,112,.4);transform:translateY(-1px);box-shadow:var(--sh-sm)}
 .symChip:active{cursor:grabbing}
 .symChip .scIcon{font-size:17px;line-height:1;width:22px;text-align:center;flex-shrink:0}
 .symChip .scText{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .symManageRow{display:flex;gap:8px;margin-top:8px}
 .symManageRow .btn{flex:1}
-.symHint{font-size:11px;color:var(--muted);line-height:1.45;margin-top:8px;border:1px dashed #f6d5c2;border-radius:12px;padding:8px 10px;background:#fff8f5}
+.symHint{font-size:11px;color:var(--c-muted);line-height:1.45;margin-top:8px}
 .ev.sym-log{border-left-color:#f97316!important;background:linear-gradient(135deg,#fff8f2,#fff3e8)!important}
 .ev.sym-log .evName{color:#9a3412}
 .symTag{display:inline-block;background:#fde8d4;color:#9a3412;border-radius:999px;padding:2px 7px;font-size:10px;font-weight:900;margin-top:3px}
@@ -210,9 +210,9 @@ body{background:radial-gradient(ellipse 120% 80% at 15% 0%,#cef2e0 0%,#e8f5ef 30
 .wardChip.all.active{background:var(--c-navy);border-color:var(--c-navy);color:#fff;box-shadow:0 2px 7px rgba(23,63,120,.26)}
 .wardManageBtn{border-radius:9px;font-size:10.5px;font-weight:700;border-color:var(--c-border2);background:#fff;box-shadow:var(--sh-xs);padding:4px 8px}
 .wardManageBtn:hover{background:var(--c-surface2)}
-#workspace{grid-template-columns:minmax(0,1fr) 320px;gap:12px;padding:0 16px 14px}
+#workspace{grid-template-columns:minmax(0,1fr) 200px;gap:10px;padding:0 16px 14px}
 .boardShell{border-radius:var(--r-xl);border:1px solid rgba(202,224,214,.9);box-shadow:var(--sh-lg);background:#fff;overflow:hidden}
-.rightPanel{border-radius:var(--r-xl);padding:11px;background:linear-gradient(180deg,#fff 0%,#f7fbf9 100%);border:1px solid rgba(202,224,214,.9);box-shadow:var(--sh-md)}
+.rightPanel{border-radius:var(--r-xl);padding:11px;background:linear-gradient(180deg,#fff 0%,#f7fbf9 100%);border:1px solid rgba(202,224,214,.9);box-shadow:var(--sh-md);position:relative}
 .panelTitle{font-size:10.5px;font-weight:700;color:var(--c-muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:7px}
 .sep{border-top:1px solid var(--c-border);margin:9px 0}
 #left-date{background:var(--c-surface2);width:var(--dayW)}
@@ -262,7 +262,7 @@ body{background:radial-gradient(ellipse 120% 80% at 15% 0%,#cef2e0 0%,#e8f5ef 30
 .taskItem div{font-size:10.5px;color:var(--c-muted);font-weight:600;margin-top:1px}
 .taskItem.clickable:hover{background:var(--c-mint-light);border-color:rgba(10,168,112,.4);transform:translateX(-1px)}
 .quickPanel{border-radius:var(--r-lg);padding:10px;background:linear-gradient(180deg,#fff,#f7fbf9);border:1px solid rgba(202,224,214,.8);margin-top:7px;box-shadow:var(--sh-xs)}
-.quickGrid{grid-template-columns:1fr 1fr;gap:6px}
+.quickGrid{grid-template-columns:1fr;gap:5px}
 .quickAction{border-radius:12px;padding:8px 7px;background:var(--c-surface2);border-color:var(--c-border);font-weight:700;font-size:11.5px;box-shadow:var(--sh-xs);transition:all .14s}
 .quickAction:hover{background:var(--c-mint-light);border-color:rgba(10,168,112,.4);transform:translateY(-1px);box-shadow:var(--sh-sm)}
 .quickHint{border-radius:10px;background:var(--c-surface2);border:1px dashed var(--c-border2);color:var(--c-muted);font-size:11px;padding:7px 8px;margin-top:6px}
@@ -337,7 +337,7 @@ body.quickPanelHidden .rightPanel.quickCollapsed .quickAction:hover:after,body.q
 .rightPanel.quickCollapsed .quickAction:hover:after{content:attr(data-label);position:absolute;right:50px;top:50%;transform:translateY(-50%);background:#0b2520;color:#fff;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:var(--sh-lg);z-index:5000;pointer-events:none}
 .rightPanel.quickCollapsed .quickAction:hover:before{content:'';position:absolute;right:43px;top:50%;transform:translateY(-50%);border:6px solid transparent;border-left-color:#0b2520;z-index:5000;pointer-events:none}
 @media(max-width:1100px){#workspace{grid-template-columns:minmax(0,1fr) 78px}.rightPanel{width:78px}.rightPanel:not(.quickExpandedMobile){padding:9px 7px}.rightPanel:not(.quickExpandedMobile) .panelTitle:not(.quickPanelTitle),.rightPanel:not(.quickExpandedMobile) #taskList,.rightPanel:not(.quickExpandedMobile) .sep,.rightPanel:not(.quickExpandedMobile) #addPatientBtn,.rightPanel:not(.quickExpandedMobile) #staffBtn2,.rightPanel:not(.quickExpandedMobile) #soundBtn,.rightPanel:not(.quickExpandedMobile) #alertStatus,.rightPanel:not(.quickExpandedMobile) .hint{display:none!important}}
-@media(max-width:1320px){#workspace{grid-template-columns:minmax(0,1fr) 300px}.lane{min-width:140px;max-width:140px;width:140px}.brand{min-width:230px}.cmd .hint{display:none}.dateText{font-size:16px}}
+@media(max-width:1320px){#workspace{grid-template-columns:minmax(0,1fr) 200px}.lane{min-width:140px;max-width:140px;width:140px}.brand{min-width:230px}.cmd .hint{display:none}.dateText{font-size:16px}}
 
 </style>
 
@@ -365,23 +365,24 @@ body.quickPanelHidden .rightPanel.quickCollapsed .quickAction:hover:after,body.q
 <div id="main-scroll"><div id="lanes"><div id="nowLine"><span id="nowClock"></span></div></div></div>
 </div>
 <aside class="rightPanel" id="rightPanel">
+<button class="quickToggleBtn" id="quickToggleBtn" title="ย่อ/ขยาย panel" style="position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:8px;font-size:14px;display:flex;align-items:center;justify-content:center;padding:0;z-index:10">⟩</button>
 <div class="taskList" id="taskList"></div>
 <div class="sep"></div><button class="btn primary" id="addPatientBtn" style="width:100%">+ เพิ่มสัตว์ป่วย</button><button class="btn" id="staffBtn2" style="width:100%;margin-top:8px">จัดการผู้ทำ</button>
 <div class="quickPanel" id="quickPanel">
-  <div class="quickPanelHeader"><div class="panelTitle quickPanelTitle">Quick action</div><button class="quickToggleBtn" id="quickToggleBtn" title="ย่อ/ขยาย Quick action">⟨</button></div>
+  <div class="quickPanelHeader"><div class="panelTitle quickPanelTitle">Quick action</div></div>
   <div class="quickGrid" id="quickActions"></div>
   <div class="quickManageRow"><button class="btn" id="quickManageBtn">จัดการ Quick action</button></div>
   <div class="quickHint">ลากรายการไปวางในช่องเวลา แล้วเลือกได้ว่าจะสร้างครั้งเดียวหรือทำซ้ำ</div>
 </div>
 <div class="symPanel" id="symPanel">
-  <div class="symPanelHeader"><div class="symPanelTitle">🩺 บันทึกอาการ</div><button class="quickToggleBtn" id="symManageBtn2" title="จัดการรายการอาการ" style="font-size:12px;padding:5px 8px">จัดการ</button></div>
+  <div class="symPanelHeader"><div class="symPanelTitle">🩺 บันทึกอาการ</div></div>
   <div class="symGrid" id="symChips"></div>
-  <div class="symHint">ลากแปะในตาราง · กรอกรายละเอียดได้ทันที</div>
+  <div class="quickManageRow"><button class="btn" id="symManageBtn3" style="width:100%">จัดการ</button></div>
+  <div class="symHint">ลากแปะในตาราง</div>
 </div>
-<div class="sep"></div>
-<button class="btn" id="soundBtn" style="width:100%">🔔 เปิด/ทดสอบเสียงเตือน</button>
-<div class="alertBadge" id="alertStatus">เสียงเตือน: รอเปิดใช้งาน</div>
-<div class="hint"><b>ใช้งานเร็ว</b><br/>คลิกงาน = เลือก · Ctrl+C copy · Ctrl+V paste ที่ตำแหน่งเมาส์ · Del ลบงาน<br/>ลากงานเพื่อย้ายเวลา/สัตว์ · ดึงขอบล่างเพื่อปรับระยะเวลา<br/><br/><b>ช่วงเวลา</b><br/>ปกติแสดงย้อนหลัง 2 วัน และล่วงหน้า 5 วัน เพื่อให้ตารางเร็วและอ่านง่าย · กด “ขยายช่วง” เพื่อดูย้อนหลัง 30 วัน และล่วงหน้า 2 เดือน</div>
+<button class="btn" id="soundBtn" style="display:none">🔔 เปิด/ทดสอบเสียงเตือน</button>
+<div class="alertBadge" id="alertStatus" style="display:none">เสียงเตือน: รอเปิดใช้งาน</div>
+<div class="hint" style="display:none"><b>ใช้งานเร็ว</b><br/>คลิกงาน = เลือก · Ctrl+C copy · Ctrl+V paste ที่ตำแหน่งเมาส์ · Del ลบงาน<br/>ลากงานเพื่อย้ายเวลา/สัตว์ · ดึงขอบล่างเพื่อปรับระยะเวลา<br/><br/><b>ช่วงเวลา</b><br/>ปกติแสดงย้อนหลัง 2 วัน และล่วงหน้า 5 วัน เพื่อให้ตารางเร็วและอ่านง่าย · กด “ขยายช่วง” เพื่อดูย้อนหลัง 30 วัน และล่วงหน้า 2 เดือน</div>
 </aside>
 </div>
 </div>
@@ -2526,6 +2527,7 @@ $id('quickDropCancel')?.addEventListener('click',()=>{quickDropDraft=null;$id('q
 $id('quickDropCreate')?.addEventListener('click',createQuickDropFromModal);
 // Symptom log events
 $id('symManageBtn2')?.addEventListener('click',openSymModal);
+$id('symManageBtn3')?.addEventListener('click',openSymModal);
 $id('symCloseBtn')?.addEventListener('click',()=>$id('symModal').classList.remove('open'));
 $id('symSaveBtn')?.addEventListener('click',saveSymTemplate);
 $id('symClearBtn')?.addEventListener('click',clearSymForm);

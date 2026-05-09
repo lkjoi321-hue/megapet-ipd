@@ -536,7 +536,7 @@ body.quickPanelHidden .rightPanel.quickCollapsed .quickAction:hover:after,body.q
   <div class="lineSection">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <label style="margin:0">ข้อความ LINE</label>
-      <button class="lineGenBtn" id="lineGenBtn">🔄 สร้างข้อความ</button>
+      <button class="lineGenBtn" id="lineGenBtn">✨ สร้างด้วย AI</button>
     </div>
     <textarea class="lineOutput" id="lineOutput" placeholder="กด 'สร้างข้อความ' หรือเลือกรายการด้านบน..."></textarea>
   </div>
@@ -1017,7 +1017,7 @@ function buildLanes(){const lanes=document.getElementById('lanes');lanes.innerHT
 function makeEvent(ev,p,c){const el=document.createElement('div');const st=eventStatus(ev);el.className='ev '+st+(selectedId===ev.id?' selected':'')+(ev.isSymLog?' sym-log':'');el.dataset.eid=ev.id;el.style.top=yFromTs(ev.start)+'px';el.style.height=Math.max(32,ev.dur*MPX)+'px';el.style.borderLeftColor=ev.isSymLog?'#f97316':c;el.style.background=ev.isSymLog?'linear-gradient(135deg,#fff8f2,#fff3e8)':(ev.cat==='medicine'?'#eef7ff':ev.cat==='procedure'?'#f6f0ff':'#effaf5');el.style.color='#1f342d';
   const symTagHtml=ev.isSymLog&&ev.symDetail?`<div class="symTag">${esc(ev.symDetail)}</div>`:'';
   const quickEdit=`<button class="evEditMini" data-edit-eid="${ev.id}" title="แก้ไขงาน">✎</button>`;
-  const quickDone=!ev.done?`<button class="evDoneMini" data-done-eid="${ev.id}" title="บันทึกผู้ทำ">✓</button>`:'';
+  const quickDone=ev.done?`<button class="evDoneMini" data-undone-eid="${ev.id}" title="ยกเลิกการทำ" style="background:#dc2626">✕</button>`:`<button class="evDoneMini" data-done-eid="${ev.id}" title="บันทึกผู้ทำ">✓</button>`;
   el.innerHTML=`${quickEdit}${quickDone}<div class="evName">${esc(ev.name)}</div><div class="evTime">${ds(ev.start)} ${timeText(ev.start)}–${timeText(ev.start+ev.dur*MIN)}</div>${symTagHtml}${ev.note?`<div class="evNote">${esc(ev.note)}</div>`:''}${ev.done?`<div class="doneRow">✓ ${esc(ev.doneBy||'ทำแล้ว')} ${esc(ev.doneAt||'')}${ev.doneNote?' · '+esc(ev.doneNote):''}</div>`:''}<div class="resizeH"></div>`;return el}
 function renderPanel(){const n=Date.now(), end=n+180*MIN;const list=state.events.filter(e=>!e.done&&e.start+e.dur*MIN>=n-240*MIN&&e.start<=end).sort((a,b)=>a.start-b.start).slice(0,12);const box=document.getElementById('taskList');if(!list.length){box.innerHTML='<div class="hint">ไม่มีงานใกล้ถึงเวลา</div>';return}box.innerHTML=list.map(e=>{const p=state.patients.find(x=>x.id===e.pid)||{};const st=eventStatus(e);return `<div class="taskItem clickable" data-jump-eid="${e.id}" style="border-left:4px solid ${st==='overdue'?'var(--red)':st==='soon'?'var(--amber)':'var(--mint)'}" title="คลิกเพื่อไปที่งานนี้"><b>${esc(timeText(e.start))} · ${esc(e.name)}</b><div>${esc(p.name||'-')} · ${esc(p.cage||'-')} ${e.note?'· '+esc(e.note):''}</div></div>`}).join('')}
 function jumpToEvent(id){const ev=state.events.find(e=>Number(e.id)===Number(id));if(!ev)return;if(!inRange(ev)){setStatus('งานนี้อยู่นอกช่วง timeline ที่แสดง','var(--amber)');return}selectedId=ev.id;mainScroll.scrollTo({top:Math.max(0,yFromTs(ev.start)-160),behavior:'smooth'});setTimeout(()=>{document.querySelectorAll('.ev.selected,.ev.focusFlash').forEach(x=>x.classList.remove('selected','focusFlash'));const el=document.querySelector(`.ev[data-eid="${ev.id}"]`);if(el){el.classList.add('selected','focusFlash')}},250)}
@@ -1627,7 +1627,39 @@ async function copyCareSummary(){
 function getQuickActions(){if(!Array.isArray(state.quickActions)||!state.quickActions.length)state.quickActions=[...DEFAULT_QUICK_ACTIONS];return state.quickActions}
 function renderQuickActions(){
   const box=$id('quickActions'); if(!box)return;
-  box.innerHTML=getQuickActions().map((q,i)=>`<div class="quickAction" draggable="false" data-q-i="${i}" data-label="${esc(q.name)}" title="${esc(q.name)} · ลากไปวางในตาราง"><span class="qaIcon">${esc(q.emoji||'⚡')}</span><span class="qaText">${esc(q.name)}</span></div>`).join('');
+  box.innerHTML=getQuickActions().map((q,i)=>`<div class="quickAction" draggable="false" data-q-i="${i}" data-label="${esc(q.name)}" title="${esc(q.name)} · ลากไปวางในตาราง"><span class="qaReorder" data-reorder-qa="${i}" title="ลากเพื่อเรียงลำดับ" style="cursor:grab;opacity:.4;font-size:12px;flex-shrink:0">⠿</span><span class="qaIcon">${esc(q.emoji||'⚡')}</span><span class="qaText">${esc(q.name)}</span></div>`).join('');
+  // reorder drag
+  let dragIdx=null;
+  box.querySelectorAll('[data-reorder-qa]').forEach(handle=>{
+    handle.addEventListener('pointerdown',ev=>{
+      ev.stopPropagation();ev.preventDefault();
+      dragIdx=+handle.dataset.reorderQa;
+      handle.setPointerCapture(ev.pointerId);
+      handle.closest('.quickAction').style.opacity='.5';
+      handle.addEventListener('pointermove',onMove);
+      handle.addEventListener('pointerup',onUp,{once:true});
+    });
+    function onMove(ev){
+      ev.preventDefault();
+      const els=[...box.querySelectorAll('.quickAction')];
+      const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest('.quickAction');
+      if(!target||target===handle.closest('.quickAction'))return;
+      const ti=+target.dataset.qI;
+      if(ti===dragIdx)return;
+      const list=getQuickActions();
+      const [item]=list.splice(dragIdx,1);
+      list.splice(ti,0,item);
+      state.quickActions=list;
+      dragIdx=ti;
+      renderQuickActions();
+      save(false);
+    }
+    function onUp(){
+      dragIdx=null;
+      renderQuickActions();
+      save(false);
+    }
+  });
 }
 
 /* ============ LINE UPDATE SYSTEM ============ */
@@ -1640,8 +1672,8 @@ function openLineModal(pid){
   renderLineChecks();
   $id('lineExtraNote').value='';
   $id('lineOutput').value='';
-  // auto-gen if pid given
-  if(pid)setTimeout(genLineText,100);
+  // build template first (no AI auto-gen)
+  if(pid)setTimeout(buildLineTemplate,100);
   $id('lineModal').classList.add('open');
 }
 
@@ -1681,7 +1713,7 @@ function lineCheckToggle(key){
     lineState.checks[key]=[];
   }
   renderLineChecks();
-  genLineText();
+  buildLineTemplate();
 }
 
 function lineSubToggle(key, val){
@@ -1690,12 +1722,40 @@ function lineSubToggle(key, val){
   const idx=arr.indexOf(val);
   if(idx>=0)arr.splice(idx,1); else arr.push(val);
   renderLineChecks();
-  genLineText();
+  buildLineTemplate();
 }
 
 const LINE_ICONS={eat:'🍽️',drink:'💧',mood:'😺',poop:'💩',urine:'🚿',vomit:'🤢',wound:'🩹',med:'💊'};
 const LINE_LABELS={eat:'การกินอาหาร',drink:'การดื่มน้ำ',mood:'อารมณ์/พฤติกรรม',poop:'การขับถ่าย',urine:'ปัสสาวะ',vomit:'อาเจียน',wound:'แผล/ผิวหนัง',med:'ยาและการรักษา'};
 
+function buildLineTemplate(){
+  const p=state.patients.find(x=>x.id===lineState.pid);
+  const out=$id('lineOutput'); if(!out)return;
+  if(!p){out.value='';return;}
+  const now=new Date();
+  const dateStr=`${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()+543}`;
+  const timeStr=`${pad(now.getHours())}:${pad(now.getMinutes())} น.`;
+  const extra=($id('lineExtraNote')?.value||'').trim();
+  const todMs=startOfDayMs(Date.now()); const todEnd=todMs+DAY;
+  const todEvs=state.events.filter(e=>e.pid===p.id&&e.start>=todMs&&e.start<todEnd).sort((a,b)=>a.start-b.start);
+  const doneEvs=todEvs.filter(e=>e.done&&!e.isSymLog);
+  const pendingEvs=todEvs.filter(e=>!e.done&&!e.isSymLog);
+  const symEvs=todEvs.filter(e=>e.isSymLog);
+  let lines=[];
+  lines.push(`🐾 อัปเดตสุขภาพน้อง${p.name} (${p.type||'สัตว์'})`);
+  lines.push(`📅 วันที่ ${dateStr}  🕐 ${timeStr}`);
+  if(p.dx)lines.push(`📋 ${p.dx}`);
+  lines.push('');
+  if(symEvs.length){lines.push('🩺 อาการที่บันทึก:');symEvs.forEach(e=>lines.push(`  • ${timeText(e.start)} ${e.name}${e.symDetail?' ('+e.symDetail+')':''}${e.note?' — '+e.note:''}`));}
+  if(doneEvs.length){lines.push('✅ ทำแล้ว:');doneEvs.forEach(e=>lines.push(`  • ${timeText(e.start)} ${e.name}${e.doneBy?' ('+e.doneBy+')':''}${e.note?' — '+e.note:''}`));}
+  if(pendingEvs.length){lines.push('⏳ รอดำเนินการ:');pendingEvs.forEach(e=>lines.push(`  • ${timeText(e.start)} ${e.name}`));}
+  if(extra){lines.push('');lines.push(`📝 ${extra}`);}
+  if(p.doctor)lines.push(`
+👨‍⚕️ ดูแลโดย ${p.doctor}`);
+  out.value=lines.join('\n');
+  const genBtn=$id('lineGenBtn');
+  if(genBtn){genBtn.disabled=false;genBtn.textContent='✨ สร้างด้วย AI';}
+}
 async function genLineText(){
   const p=state.patients.find(x=>x.id===lineState.pid);
   const out=$id('lineOutput');
@@ -2089,7 +2149,35 @@ function endColDrag(){
 function getSymTemplates(){if(!Array.isArray(state.symTemplates)||!state.symTemplates.length)state.symTemplates=[...DEFAULT_SYM_TEMPLATES];return state.symTemplates}
 function renderSymChips(){
   const box=$id('symChips'); if(!box)return;
-  box.innerHTML=getSymTemplates().map((s,i)=>`<div class="symChip" data-sym-i="${i}" data-label="${esc(s.name)}" title="${esc(s.name)} · ลากไปวางในตาราง"><span class="scIcon">${esc(s.emoji||'🩺')}</span><span class="scText">${esc(s.name)}</span></div>`).join('');
+  box.innerHTML=getSymTemplates().map((s,i)=>`<div class="symChip" data-sym-i="${i}" data-label="${esc(s.name)}" title="${esc(s.name)} · ลากไปวางในตาราง"><span class="qaReorder" data-reorder-sym="${i}" title="ลากเพื่อเรียงลำดับ" style="cursor:grab;opacity:.4;font-size:12px;flex-shrink:0">⠿</span><span class="scIcon">${esc(s.emoji||'🩺')}</span><span class="scText">${esc(s.name)}</span></div>`).join('');
+  // reorder drag
+  let dragIdx=null;
+  box.querySelectorAll('[data-reorder-sym]').forEach(handle=>{
+    handle.addEventListener('pointerdown',ev=>{
+      ev.stopPropagation();ev.preventDefault();
+      dragIdx=+handle.dataset.reorderSym;
+      handle.setPointerCapture(ev.pointerId);
+      handle.closest('.symChip').style.opacity='.5';
+      handle.addEventListener('pointermove',onMove);
+      handle.addEventListener('pointerup',onUp,{once:true});
+    });
+    function onMove(ev){
+      ev.preventDefault();
+      const els=[...box.querySelectorAll('.symChip')];
+      const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest('.symChip');
+      if(!target||target===handle.closest('.symChip'))return;
+      const ti=+target.dataset.symI;
+      if(ti===dragIdx)return;
+      const list=getSymTemplates();
+      const [item]=list.splice(dragIdx,1);
+      list.splice(ti,0,item);
+      state.symTemplates=list;
+      dragIdx=ti;
+      renderSymChips();
+      save(false);
+    }
+    function onUp(){dragIdx=null;renderSymChips();save(false);}
+  });
 }
 
 let symDrag=null;
@@ -2317,7 +2405,7 @@ const mainScroll=document.getElementById('main-scroll');
 mainScroll.addEventListener('scroll',syncFixedScroll);
 mainScroll.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;const evEl=e.target.closest('.ev');if(evEl&&!drag&&!resize){const ev=state.events.find(x=>x.id===+evEl.dataset.eid);if(ev)showTT(ev,e.clientX,e.clientY)}});
 mainScroll.addEventListener('mouseleave',hideTT);
-mainScroll.addEventListener('click',e=>{const editBtn=e.target.closest('[data-edit-eid]');if(editBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(editBtn.dataset.editEid));if(ev)openEventModal(ev,ev.pid);return}const doneBtn=e.target.closest('[data-done-eid]');if(doneBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(doneBtn.dataset.doneEid));if(ev)openDone(ev);return}const btn=e.target.closest('button[data-act]');if(btn){const pid=+btn.dataset.pid, act=btn.dataset.act;if(act==='summary')openCareSummary(pid);if(act==='line')openLineModal(pid);if(act==='addEv')openEventModal(null,pid,Date.now());if(act==='editPt')openPatientModal(state.patients.find(p=>p.id===pid));return}if(e.target.closest('#addLaneBtn'))return openPatientModal(null);const evEl=e.target.closest('.ev');if(evEl){selectedId=+evEl.dataset.eid;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'));evEl.classList.add('selected');return}if(!e.target.closest('.laneHeader')){selectedId=null;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'))}});
+mainScroll.addEventListener('click',e=>{const editBtn=e.target.closest('[data-edit-eid]');if(editBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(editBtn.dataset.editEid));if(ev)openEventModal(ev,ev.pid);return}const undoneBtn=e.target.closest('[data-undone-eid]');if(undoneBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(undoneBtn.dataset.undoneEid));if(ev&&confirm(`ยกเลิกการทำงาน "${ev.name}"?`)){ev.done=false;ev.doneBy='';ev.doneAt=null;ev.doneNote='';save(false);render();setStatus('ยกเลิกการทำแล้ว','var(--amber)');}return}const doneBtn=e.target.closest('[data-done-eid]');if(doneBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(doneBtn.dataset.doneEid));if(ev)openDone(ev);return}const btn=e.target.closest('button[data-act]');if(btn){const pid=+btn.dataset.pid, act=btn.dataset.act;if(act==='summary')openCareSummary(pid);if(act==='line')openLineModal(pid);if(act==='addEv')openEventModal(null,pid,Date.now());if(act==='editPt')openPatientModal(state.patients.find(p=>p.id===pid));return}if(e.target.closest('#addLaneBtn'))return openPatientModal(null);const evEl=e.target.closest('.ev');if(evEl){selectedId=+evEl.dataset.eid;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'));evEl.classList.add('selected');return}if(!e.target.closest('.laneHeader')){selectedId=null;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'))}});
 mainScroll.addEventListener('dblclick',e=>{const evEl=e.target.closest('.ev');if(evEl){e.preventDefault();e.stopPropagation();hideTT();const ev=state.events.find(x=>x.id===+evEl.dataset.eid);if(ev)openEventModal(ev,ev.pid);return}const cell=e.target.closest('.hourCell[data-pid]');if(cell){const lane=cell.closest('.lane');const rect=lane.getBoundingClientRect();const y=e.clientY-rect.top;const ts=clampTs(roundTs(tsFromY(y),15),30);openEventModal(null,+cell.dataset.pid,ts)}});
 $id('summaryClose').onclick=()=> $id('summaryModal').classList.remove('open');
 $id('summaryCopy').onclick=copyCareSummary;

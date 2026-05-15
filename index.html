@@ -819,7 +819,18 @@ function applyRemoteCollection(key,val){
   // ป้องกัน remote overwrite หลัง local save
   if(localSaveLock&&(key==='events'||key==='patients'))return;
   if(key==='patients')state.patients=mapToArr(val).sort((a,b)=>(a.id||0)-(b.id||0));
-  if(key==='events')state.events=mapToArr(val).map(e=>{e.start=Number(e.start);return e}).filter(e=>e.id!=null&&Number.isFinite(e.start));
+  if(key==='events')state.events=mapToArr(val).map(e=>{
+    e.id=Number(e.id);
+    e.pid=Number(e.pid);
+    e.start=Number(e.start);
+    e.dur=Number(e.dur)||30;
+    e.done=e.done===true||e.done==='true';
+    e.doneBy=e.doneBy||'';
+    e.doneAt=e.doneAt||'';
+    e.doneNote=e.doneNote||'';
+    e.repeatGroupId=e.repeatGroupId||'';
+    return e;
+  }).filter(e=>e.id!=null&&Number.isFinite(e.start));
   if(key==='staff')state.staff=Array.isArray(val)?val:Object.values(val||{});
   if(key==='quickActions')state.quickActions=Array.isArray(val)?val:Object.values(val||{});
   if(key==='symTemplates')state.symTemplates=Array.isArray(val)?val:Object.values(val||{});
@@ -1667,8 +1678,11 @@ function saveDone(){
     ev.doneNote=(doneNote.value||'').trim();
     state.logs.push({at:new Date().toISOString(),act:'done',data:{id:ev.id,doneBy:ev.doneBy}});
     if(state.logs.length>500)state.logs.shift();
-    setLocalSaveLock(5000);
+    setLocalSaveLock(8000);
     save();
+    // force immediate cloud push
+    if(cloudSync.timer){clearTimeout(cloudSync.timer);cloudSync.timer=null;}
+    queueCloudSave(true);
     doneModal.classList.remove('open');
     markingId=null;
     selectedId=ev.id;

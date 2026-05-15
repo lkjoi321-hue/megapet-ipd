@@ -808,7 +808,16 @@ function cloudMeta(){return {nextPid:state.nextPid,nextEid:state.nextEid,updated
 function cloudSnapshot(){return {patients:arrToMap(state.patients),events:arrToMap(state.events),staff:state.staff||[],quickActions:state.quickActions||[],symTemplates:state.symTemplates||[],wards:state.wards||[],logs:(state.logs||[]).slice(-80),meta:cloudMeta()}}
 function stable(o){return JSON.stringify(o||null)}
 function diffMap(prefix,curr,last){const updates={};const next={};Object.keys(curr||{}).forEach(id=>{const js=stable(curr[id]);next[id]=js;if(last[id]!==js)updates[prefix+'/'+id]=curr[id]});Object.keys(last||{}).forEach(id=>{if(!(id in next))updates[prefix+'/'+id]=null});return {updates,next};}
+let localSaveLock=false;
+let localSaveLockTimer=null;
+function setLocalSaveLock(ms=5000){
+  localSaveLock=true;
+  if(localSaveLockTimer)clearTimeout(localSaveLockTimer);
+  localSaveLockTimer=setTimeout(()=>{localSaveLock=false;},ms);
+}
 function applyRemoteCollection(key,val){
+  // ป้องกัน remote overwrite หลัง local save
+  if(localSaveLock&&(key==='events'||key==='patients'))return;
   if(key==='patients')state.patients=mapToArr(val).sort((a,b)=>(a.id||0)-(b.id||0));
   if(key==='events')state.events=mapToArr(val).map(e=>{e.start=Number(e.start);return e}).filter(e=>e.id!=null&&Number.isFinite(e.start));
   if(key==='staff')state.staff=Array.isArray(val)?val:Object.values(val||{});
@@ -1658,6 +1667,7 @@ function saveDone(){
     ev.doneNote=(doneNote.value||'').trim();
     state.logs.push({at:new Date().toISOString(),act:'done',data:{id:ev.id,doneBy:ev.doneBy}});
     if(state.logs.length>500)state.logs.shift();
+    setLocalSaveLock(5000);
     save();
     doneModal.classList.remove('open');
     markingId=null;
@@ -2644,7 +2654,7 @@ mainScroll.addEventListener('scroll',syncFixedScroll);
 mainScroll.addEventListener('mousemove',e=>{mouseX=e.clientX;mouseY=e.clientY;const evEl=e.target.closest('.ev');if(evEl&&!drag&&!resize){const ev=state.events.find(x=>x.id===+evEl.dataset.eid);if(ev)showTT(ev,e.clientX,e.clientY);}else if(!e.target.closest('.ev')){hideTT();}});
 mainScroll.addEventListener('mouseleave',hideTT);
 mainScroll.addEventListener('mouseout',e=>{if(!e.relatedTarget||!e.relatedTarget.closest('.ev'))hideTT();});
-mainScroll.addEventListener('click',e=>{const editBtn=e.target.closest('[data-edit-eid]');if(editBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(editBtn.dataset.editEid));if(ev)openEventModal(ev,ev.pid);return}const undoneBtn=e.target.closest('[data-undone-eid]');if(undoneBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(undoneBtn.dataset.undoneEid));if(ev&&confirm(`ยกเลิกการทำงาน "${ev.name}"?`)){ev.done=false;ev.doneBy='';ev.doneAt=null;ev.doneNote='';save(false);render();setStatus('ยกเลิกการทำแล้ว','var(--amber)');}return}const doneBtn=e.target.closest('[data-done-eid]');if(doneBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(doneBtn.dataset.doneEid));if(ev)openDone(ev);return}const btn=e.target.closest('button[data-act]');if(btn){const pid=+btn.dataset.pid, act=btn.dataset.act;if(act==='summary')openCareSummary(pid);if(act==='line')openLineModal(pid);if(act==='addEv')openEventModal(null,pid,Date.now());if(act==='editPt')openPatientModal(state.patients.find(p=>p.id===pid));if(act==='discharge')openDischargeModal(pid);return}if(e.target.closest('#addLaneBtn'))return openPatientModal(null);const evEl=e.target.closest('.ev');if(evEl){selectedId=+evEl.dataset.eid;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'));evEl.classList.add('selected');return}if(!e.target.closest('.laneHeader')){selectedId=null;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'))}});
+mainScroll.addEventListener('click',e=>{const editBtn=e.target.closest('[data-edit-eid]');if(editBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(editBtn.dataset.editEid));if(ev)openEventModal(ev,ev.pid);return}const undoneBtn=e.target.closest('[data-undone-eid]');if(undoneBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(undoneBtn.dataset.undoneEid));if(ev&&confirm(`ยกเลิกการทำงาน "${ev.name}"?`)){ev.done=false;ev.doneBy='';ev.doneAt=null;ev.doneNote='';setLocalSaveLock(5000);save();render();setStatus('ยกเลิกการทำแล้ว','var(--amber)');}return}const doneBtn=e.target.closest('[data-done-eid]');if(doneBtn){e.preventDefault();e.stopPropagation();const ev=state.events.find(x=>Number(x.id)===Number(doneBtn.dataset.doneEid));if(ev)openDone(ev);return}const btn=e.target.closest('button[data-act]');if(btn){const pid=+btn.dataset.pid, act=btn.dataset.act;if(act==='summary')openCareSummary(pid);if(act==='line')openLineModal(pid);if(act==='addEv')openEventModal(null,pid,Date.now());if(act==='editPt')openPatientModal(state.patients.find(p=>p.id===pid));if(act==='discharge')openDischargeModal(pid);return}if(e.target.closest('#addLaneBtn'))return openPatientModal(null);const evEl=e.target.closest('.ev');if(evEl){selectedId=+evEl.dataset.eid;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'));evEl.classList.add('selected');return}if(!e.target.closest('.laneHeader')){selectedId=null;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'))}});
 mainScroll.addEventListener('dblclick',e=>{const evEl=e.target.closest('.ev');if(evEl){e.preventDefault();e.stopPropagation();hideTT();const ev=state.events.find(x=>x.id===+evEl.dataset.eid);if(ev)openEventModal(ev,ev.pid);return}const cell=e.target.closest('.hourCell[data-pid]');if(cell){const lane=cell.closest('.lane');const rect=lane.getBoundingClientRect();const y=e.clientY-rect.top;const ts=clampTs(roundTs(tsFromY(y),15),30);openEventModal(null,+cell.dataset.pid,ts)}});
 $id('summaryClose').onclick=()=> $id('summaryModal').classList.remove('open');
 $id('summaryCopy').onclick=copyCareSummary;

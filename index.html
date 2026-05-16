@@ -803,7 +803,7 @@ function watchFirebaseConnection(){
   }catch(e){}
 }
 function arrToMap(arr){const out={};(arr||[]).forEach(x=>{if(x&&x.id!=null)out[String(x.id)]=x});return out}
-function mapToArr(v){if(Array.isArray(v))return v; if(!v||typeof v!=='object')return []; return Object.keys(v).map(k=>v[k]).filter(Boolean)}
+function mapToArr(v){if(Array.isArray(v))return v.filter(Boolean); if(!v||typeof v!=='object')return []; return Object.keys(v).map(k=>v[k]).filter(Boolean)}
 function cloudMeta(){return {nextPid:state.nextPid,nextEid:state.nextEid,updatedAt:Date.now(),version:'v41-full-slide-panel'}}
 function cloudSnapshot(){return {patients:arrToMap(state.patients),events:arrToMap(state.events),staff:state.staff||[],quickActions:state.quickActions||[],symTemplates:state.symTemplates||[],wards:state.wards||[],logs:(state.logs||[]).slice(-80),meta:cloudMeta()}}
 function stable(o){return JSON.stringify(o||null)}

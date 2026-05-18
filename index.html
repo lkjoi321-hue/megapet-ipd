@@ -676,9 +676,9 @@ body.quickPanelHidden .rightPanel.quickCollapsed .quickAction:hover:after,body.q
 </div></div>
 <script>
 function getCSSPx(varName, fallback){const raw=getComputedStyle(document.documentElement).getPropertyValue(varName).trim();const val=parseFloat(raw);return (Number.isFinite(val)&&val>0)?val:fallback;}
-let HOUR_H=getCSSPx('--hour',52), HDR_H=getCSSPx('--head',64);
+let HOUR_H=getCSSPx('--hour',52), HDR_H=getCSSPx('--head',90);
 let MPX=HOUR_H/60;
-function syncLayoutConstants(){HOUR_H=getCSSPx('--hour',52);HDR_H=getCSSPx('--head',64);MPX=HOUR_H/60;}
+function syncLayoutConstants(){HOUR_H=getCSSPx('--hour',52);HDR_H=getCSSPx('--head',90);MPX=HOUR_H/60;}
 const BASE_PAST_DAYS=2, BASE_FUTURE_DAYS=5, EXPAND_PAST_DAYS=30, EXPAND_FUTURE_DAYS=62;
 let timelineExpanded=localStorage.getItem('ipd_timeline_expanded')==='1';
 const DAY=86400000, MIN=60000;
@@ -816,8 +816,6 @@ function setLocalSaveLock(ms=5000){
   localSaveLockTimer=setTimeout(()=>{localSaveLock=false;},ms);
 }
 function applyRemoteCollection(key,val){
-  // ป้องกัน remote overwrite หลัง local save
-  if(localSaveLock&&(key==='events'||key==='patients'))return;
   if(key==='patients')state.patients=mapToArr(val).sort((a,b)=>(a.id||0)-(b.id||0));
   if(key==='events')state.events=mapToArr(val).map(e=>{
     e.id=Number(e.id);
@@ -840,7 +838,13 @@ function applyRemoteCollection(key,val){
   try{localStorage.setItem('ipd_v16_cloud_sync',JSON.stringify(state))}catch(e){}
 }
 function queueCloudSave(force=false){
-  if(!cloudSync.ready||cloudSync.applying||!cloudSync.ref)return;
+  if(!cloudSync.ready||!cloudSync.ref)return;
+  if(cloudSync.applying){
+    // ถ้า applying อยู่ให้ retry หลัง 200ms แทนที่จะ drop
+    clearTimeout(cloudSync.timer);
+    cloudSync.timer=setTimeout(()=>queueCloudSave(force),200);
+    return;
+  }
   clearTimeout(cloudSync.timer);
   cloudSync.timer=setTimeout(()=>{
     try{
@@ -872,6 +876,9 @@ function startCloudListeners(){
   ['patients','events','staff','quickActions','symTemplates','wards','logs','meta'].forEach(key=>{
     cloudSync.ref.child(key).on('value',snap=>{
       if(cloudSync.applying)return;
+      // ถ้า localSaveLock ยังเปิดอยู่ → ข้ามการ overwrite patients/events จาก remote
+      // เพื่อป้องกัน Firebase echo กลับมาด้วยข้อมูลเก่า (done=false) ทับข้อมูลใหม่
+      if(localSaveLock&&(key==='events'||key==='patients'))return;
       const val=snap.val(); if(val==null)return;
       cloudSync.applying=true;
       applyRemoteCollection(key,val);
@@ -1593,6 +1600,7 @@ function saveEventModal(){
     if(modal) modal.classList.remove('open');
     editingEventId=null;
     render();
+    queueCloudSave();
     setStatus(message,'var(--green)');
     if(data.start<rangeStartMs||data.start>rangeEndMs)setStatus('บันทึกแล้ว แต่อยู่นอกช่วง timeline ที่แสดง','var(--amber)');
   }catch(err){
@@ -1676,7 +1684,7 @@ function saveDone(){
     ev.doneNote=(doneNote.value||'').trim();
     state.logs.push({at:new Date().toISOString(),act:'done',data:{id:ev.id,doneBy:ev.doneBy}});
     if(state.logs.length>500)state.logs.shift();
-    setLocalSaveLock(8000);
+    setLocalSaveLock(15000);
     save();
     // force immediate cloud push
     if(cloudSync.timer){clearTimeout(cloudSync.timer);cloudSync.timer=null;}
@@ -2709,8 +2717,8 @@ document.addEventListener('mousemove',e=>{
   if(resize){resize.moved=true;const ev=state.events.find(x=>x.id===resize.id);if(!ev)return;ev.dur=Math.max(5,Math.round((resize.sd+(e.clientY-resize.sy)/MPX)/5)*5);resize.el.style.height=Math.max(32,ev.dur*MPX)+'px';const timeEl=resize.el.querySelector('.evTime');if(timeEl)timeEl.textContent=`${ds(ev.start)} ${timeText(ev.start)}–${timeText(ev.start+ev.dur*MIN)}`}
 },true);
 document.addEventListener('mouseup',()=>{
-  if(drag){log('move_event',{id:drag.id});render()}
-  if(resize&&resize.moved){log('resize_event',{id:resize.id});render()}
+  if(drag){log('move_event',{id:drag.id});render();queueCloudSave()}
+  if(resize&&resize.moved){log('resize_event',{id:resize.id});render();queueCloudSave()}
   drag=null;pendingDrag=null;resize=null;
 });
 document.addEventListener('keydown',e=>{const tag=document.activeElement?.tagName;if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='c'){e.preventDefault();copySelected()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'){e.preventDefault();pasteClipboard()}if((e.key==='Delete'||e.key==='Backspace')&&selectedId){e.preventDefault();deleteEvent(selectedId)}if(e.key==='Escape'){selectedId=null;document.querySelectorAll('.ev.selected').forEach(x=>x.classList.remove('selected'));hideTT()}});
@@ -2811,7 +2819,7 @@ $id('taskBoardContent')?.addEventListener('change',e=>{
   const sel=e.target.closest('[data-assign-eid]');
   if(sel){
     const ev=state.events.find(x=>x.id===+sel.dataset.assignEid);
-    if(ev){ev.assignTo=sel.value;ev.doneBy=sel.value;save(false);renderTaskBoard();}
+    if(ev){ev.assignTo=sel.value;ev.doneBy=sel.value;save();queueCloudSave();renderTaskBoard();}
     return;
   }
 });
@@ -2821,7 +2829,7 @@ $id('taskBoardContent')?.addEventListener('click',e=>{
     const ev=state.events.find(x=>x.id===+tog.dataset.doneToggle);
     if(ev){
       if(!ev.done){openDone(ev);$id('taskBoardModal').classList.remove('open');}
-      else{ev.done=false;ev.doneBy='';ev.doneNote='';ev.doneAt=null;save(false);renderTaskBoard();render();}
+      else{ev.done=false;ev.doneBy='';ev.doneNote='';ev.doneAt=null;setLocalSaveLock(5000);save();queueCloudSave(true);renderTaskBoard();render();}
     }
     return;
   }

@@ -768,7 +768,7 @@ const DEFAULT_FIREBASE_CONFIG={
   databaseURL:'https://megapet-true-default-rtdb.asia-southeast1.firebasedatabase.app',
   projectId:'megapet-true',
   appId:'1:342169018869:web:74283279bbb2d6ade200bc',
-  dbPath:'ipdBoards/megapet-main'
+  boardPath:'ipdBoards/megapet-main'
 };
 let cloudSync={ready:false,applying:false,ref:null,timer:null,connected:false,lastError:'',lastSent:{staff:'',quickActions:'',symTemplates:'',logs:'',meta:''},sentMaps:{patients:{},events:{}},listenersStarted:false,reconnectTimer:null,connRef:null};
 function getCloudConfig(){try{const saved=JSON.parse(localStorage.getItem(CLOUD_CFG_KEY)||localStorage.getItem('ipd_v15_firebase_config')||'{}');return(saved&&saved.apiKey)?saved:DEFAULT_FIREBASE_CONFIG;}catch(e){return DEFAULT_FIREBASE_CONFIG;}}
@@ -910,7 +910,6 @@ function initCloudSync(silent=false){
         applyRemoteCollection('quickActions',remote.quickActions||state.quickActions||DEFAULT_QUICK_ACTIONS);
         applyRemoteCollection('symTemplates',remote.symTemplates||state.symTemplates||DEFAULT_SYM_TEMPLATES);
         applyRemoteCollection('wards',remote.wards||state.wards||[]);
-        applyRemoteCollection('symTemplates',remote.symTemplates||state.symTemplates||DEFAULT_SYM_TEMPLATES);
         applyRemoteCollection('logs',remote.logs||state.logs||[]);
         applyRemoteCollection('meta',remote.meta||{});
         const cs=cloudSnapshot();
@@ -957,20 +956,19 @@ function refreshSyncDiag(){
   if(cfg.databaseURL&&cfg.databaseURL.endsWith('/'))lines.push(`⚠️ databaseURL มี trailing slash — กด "บันทึกและเชื่อมต่อ" อีกครั้งเพื่อแก้`);
   diag.textContent=lines.join('\n');
 }
-function openSyncModal(){fillSyncForm();
-// original:
-  const cfg=getCloudConfig();
-  ['ApiKey','AuthDomain','DatabaseURL','ProjectId','AppId','BoardPath'].forEach(k=>{const el=$id('fb'+k);if(el){const key=k.charAt(0).toLowerCase()+k.slice(1);el.value=cfg[key]||(k==='BoardPath'?'ipdBoards/megapet-main':'')}});
+function openSyncModal(){
+  fillSyncForm();
   syncLabel();$id('syncModal').classList.add('open');
   refreshSyncDiag();
 }
 function fillSyncForm(){
   const cfg=getCloudConfig();
   if($id('fbApiKey'))$id('fbApiKey').value=cfg.apiKey||'';
+  if($id('fbAuthDomain'))$id('fbAuthDomain').value=cfg.authDomain||'';
   if($id('fbDatabaseURL'))$id('fbDatabaseURL').value=cfg.databaseURL||'';
   if($id('fbProjectId'))$id('fbProjectId').value=cfg.projectId||'';
   if($id('fbAppId'))$id('fbAppId').value=cfg.appId||'';
-  if($id('fbDbPath'))$id('fbDbPath').value=cfg.dbPath||'ipdBoards/megapet-main';
+  if($id('fbBoardPath'))$id('fbBoardPath').value=cfg.boardPath||'ipdBoards/megapet-main';
 }
 function saveSyncSettings(){
   const cfg={
